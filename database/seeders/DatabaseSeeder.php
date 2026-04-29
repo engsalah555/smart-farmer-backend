@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
 
         // إضافة بيانات النباتات اليمنية
         $this->call([
+            MarketplaceCategorySeeder::class,
+            MarketplaceMetadataSeeder::class,
             PlantSeeder::class,
             YemeniCropSeeder::class,
         ]);

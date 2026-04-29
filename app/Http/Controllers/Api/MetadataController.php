@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\PaymentMethod;
-
+use Illuminate\Support\Facades\DB;
 class MetadataController extends Controller
 {
     /**
@@ -21,9 +21,15 @@ class MetadataController extends Controller
                     'label' => $cat->name,
                     'icon' => $cat->icon ?? 'default',
                 ]),
-                'units' => \DB::table('units')->pluck('name'),
+                'units' => DB::table('units')->pluck('name'),
                 'payment_methods' => PaymentMethod::where('is_active', true)
-                    ->get(['identifier as id', 'label', 'icon']),
+                    ->orderBy('id')
+                    ->get()
+                    ->map(fn ($pm) => [
+                        'id' => $pm->identifier,
+                        'label' => $pm->label,
+                        'icon' => $pm->icon,
+                    ]),
             ],
             'app_info' => [
                 'version' => config('app.version', '2.0.0'),

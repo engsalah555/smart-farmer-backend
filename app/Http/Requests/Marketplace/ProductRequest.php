@@ -13,7 +13,7 @@ class ProductRequest extends FormRequest
 
     public function rules()
     {
-        $isUpdate = $this->route('product') !== null;
+        $isUpdate = $this->route('id') !== null;
 
         return [
             'name' => $isUpdate ? 'sometimes|required|string|max:255' : 'required|string|max:255',
@@ -24,8 +24,9 @@ class ProductRequest extends FormRequest
             'catalog_id' => 'nullable|exists:store_catalogs,id',
             'category' => $isUpdate ? 'sometimes|nullable|string' : 'nullable|string',
             'is_featured' => 'nullable|boolean',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'other_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'other_images' => 'nullable|array|max:4',
+            'other_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
             'paymentMethods' => 'nullable|array',
             'paymentMethods.*' => 'string',
         ];

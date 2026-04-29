@@ -28,7 +28,7 @@ class ProductResource extends JsonResource
             'image_url' => $this->image_url,
             'thumbnail_url' => $this->getFirstMediaUrl('main_image', 'thumb') ?: $this->image_url,
             'is_featured' => (bool) $this->is_featured,
-            'paymentMethods' => ['cash', 'bank_transfer'], // Default satisfied for now
+            'paymentMethods' => $this->payment_methods ?? ['cash', 'bank_transfer'],
             'phoneNumber' => $this->whenLoaded('store', fn () => $this->store->user?->phone ?? ''),
             'avg_rating' => (float) ($this->reviews_avg_rating ?? $this->avg_rating ?? 0),
             'reviews_count' => (int) ($this->reviews_count ?? 0),
@@ -61,10 +61,9 @@ class ProductResource extends JsonResource
             ),
 
             // الصور الإضافية — محمّلة من MediaLibrary
-            'additional_images' => $this->when(
-                $this->relationLoaded('media'),
-                fn () => $this->getMedia('gallery')->map(fn ($media) => $media->getUrl())->toArray()
-            ),
+            'additional_images' => $this->relationLoaded('media')
+                ? $this->getMedia('gallery')->map(fn ($media) => $media->getUrl())->toArray()
+                : [],
         ];
     }
 }
