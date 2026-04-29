@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Modules\Marketplace\Domain\Exceptions\UnauthorizedAccessException;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckStoreOwnership
@@ -30,8 +31,8 @@ class CheckStoreOwnership
 
         // 3. Check store existence
         if (! $user->store) {
-            // Allow access to 'my-store' route so the user can see they don't have a store (404 handled by controller)
-            if ($request->is('api/marketplace/seller/my-store')) {
+            // Allow access to 'my-store' routes so the user can see and setup their store
+            if ($request->is('*marketplace/seller/my-store*')) {
                 return $next($request);
             }
 
@@ -46,7 +47,7 @@ class CheckStoreOwnership
         // 3. Check Product Ownership
         $product = $request->route('product');
         if ($product) {
-            $pStoreId = is_object($product) ? $product->store_id : \DB::table('products')
+            $pStoreId = is_object($product) ? $product->store_id : DB::table('products')
                 ->where('id', $product)
                 ->orWhere('slug', $product)
                 ->value('store_id');
@@ -59,7 +60,7 @@ class CheckStoreOwnership
         // 4. Check Catalog Ownership
         $catalog = $request->route('catalog');
         if ($catalog) {
-            $cStoreId = is_object($catalog) ? $catalog->store_id : \DB::table('store_catalogs')
+            $cStoreId = is_object($catalog) ? $catalog->store_id : DB::table('store_catalogs')
                 ->where('id', $catalog)
                 ->orWhere('slug', $catalog)
                 ->value('store_id');
@@ -74,7 +75,7 @@ class CheckStoreOwnership
         if ($order) {
             // We check if the order has items from this seller's store
             $orderId = is_object($order) ? $order->id : $order;
-            $hasItems = \DB::table('order_items')
+            $hasItems = DB::table('order_items')
                 ->join('products', 'products.id', '=', 'order_items.product_id')
                 ->where('order_items.order_id', $orderId)
                 ->where('products.store_id', $storeId)
