@@ -2,17 +2,17 @@
 
 namespace App\Http\Middleware;
 
+use App\Modules\Marketplace\Domain\Exceptions\UnauthorizedAccessException;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Modules\Marketplace\Domain\Exceptions\UnauthorizedAccessException;
 
 class CheckStoreOwnership
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -23,9 +23,22 @@ class CheckStoreOwnership
             return $next($request);
         }
 
-        // 2. Must be a seller with a store to access management routes
-        if (!$user->isSeller()) {
-            return response()->json(['message' => 'Unauthorized. Only store owners can access this resource.'], 403);
+        // 2. Must be a seller role
+        if (! $user->isSeller()) {
+            return response()->json(['message' => 'Unauthorized. Only sellers can access this resource.'], 403);
+        }
+
+        // 3. Check store existence
+        if (! $user->store) {
+            // Allow access to 'my-store' route so the user can see they don't have a store (404 handled by controller)
+            if ($request->is('api/marketplace/seller/my-store')) {
+                return $next($request);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'يجب إنشاء متجر أولاً للوصول إلى هذه الموارد.',
+            ], 403);
         }
 
         $storeId = $user->store->id;
@@ -39,7 +52,7 @@ class CheckStoreOwnership
                 ->value('store_id');
 
             if ($pStoreId && $pStoreId !== $storeId) {
-                throw new UnauthorizedAccessException("هذا المنتج لا ينتمي لمتجرك.");
+                throw new UnauthorizedAccessException('هذا المنتج لا ينتمي لمتجرك.');
             }
         }
 
@@ -52,7 +65,7 @@ class CheckStoreOwnership
                 ->value('store_id');
 
             if ($cStoreId && $cStoreId !== $storeId) {
-                throw new UnauthorizedAccessException("هذا الكتالوج لا ينتمي لمتجرك.");
+                throw new UnauthorizedAccessException('هذا الكتالوج لا ينتمي لمتجرك.');
             }
         }
 
@@ -67,8 +80,8 @@ class CheckStoreOwnership
                 ->where('products.store_id', $storeId)
                 ->exists();
 
-            if (!$hasItems) {
-                throw new UnauthorizedAccessException("هذا الطلب لا يحتوي على منتجات من متجرك.");
+            if (! $hasItems) {
+                throw new UnauthorizedAccessException('هذا الطلب لا يحتوي على منتجات من متجرك.');
             }
         }
 

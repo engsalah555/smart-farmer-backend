@@ -3,29 +3,30 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-
-use Laravel\Sanctum\HasApiTokens;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
-use Filament\Models\Contracts\HasTenants;
-use Filament\Models\Contracts\HasDefaultTenant;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-use App\Modules\Marketplace\Domain\Models\Store;
-use App\Modules\Marketplace\Domain\Models\Order;
-use App\Modules\PlantGuide\Domain\Models\Crop;
-use App\Modules\Iot\Domain\Models\IotDevice;
-use App\Modules\Community\Domain\Models\Post;
 use App\Modules\Community\Domain\Models\Comment;
 use App\Modules\Community\Domain\Models\Like;
+use App\Modules\Community\Domain\Models\Post;
 use App\Modules\Community\Domain\Models\SavedPost;
+use App\Modules\Marketplace\Domain\Models\Order;
+use App\Modules\Marketplace\Domain\Models\Store;
+use App\Modules\PlantGuide\Domain\Models\Crop;
+use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasDefaultTenant;
+use Filament\Models\Contracts\HasTenants;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements FilamentUser, HasTenants, HasDefaultTenant
+class User extends Authenticatable implements FilamentUser, HasDefaultTenant, HasTenants
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -73,37 +74,37 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasDefau
     /**
      * Relationships
      */
-    public function store(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function store(): HasOne
     {
         return $this->hasOne(Store::class);
     }
 
-    public function crops(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function crops(): HasMany
     {
         return $this->hasMany(Crop::class);
     }
 
-    public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
     }
 
-    public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
-    public function orders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
 
-    public function likes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function likes(): HasMany
     {
         return $this->hasMany(Like::class);
     }
 
-    public function savedPosts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function savedPosts(): HasMany
     {
         return $this->hasMany(SavedPost::class);
     }
@@ -113,7 +114,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasDefau
      */
     public function isSeller(): bool
     {
-        return $this->store()->exists() || $this->user_type === 'admin';
+        return $this->user_type === 'seller' || $this->user_type === 'admin';
     }
 
     public function getIsSellerAttribute(): bool
@@ -175,13 +176,11 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasDefau
 
     /**
      * Get the URL to the user's profile photo.
-     *
-     * @return string|null
      */
     public function getProfilePhotoUrlAttribute(): ?string
     {
-        if (!$this->profile_image) {
-            return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
+        if (! $this->profile_image) {
+            return 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&color=7F9CF5&background=EBF4FF';
         }
 
         // If it's already a full URL, return it
@@ -197,6 +196,6 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasDefau
             return asset($path);
         }
 
-        return asset('storage/' . $path);
+        return asset('storage/'.$path);
     }
 }
