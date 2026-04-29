@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
@@ -24,7 +25,7 @@ class AuthService
 
         if (isset($data['store_type']) || ($data['user_type'] ?? '') === 'seller') {
             $user->store()->create([
-                'store_name' => $data['store_name'] ?? ($user->name . ' Store'),
+                'store_name' => $data['store_name'] ?? ($user->name.' Store'),
                 'store_type' => $data['store_type'] ?? 'general',
             ]);
         }
@@ -39,9 +40,9 @@ class AuthService
     {
         $user = User::where('email', $data['email'])->first();
 
-        if (!$user || !Hash::check($data['password'], $user->password)) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'email' => ['البريد الإلكتروني أو كلمة المرور غير صحيحة']
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['البريد الإلكتروني أو كلمة المرور غير صحيحة'],
             ]);
         }
 
@@ -56,9 +57,9 @@ class AuthService
         $updateData = collect($data)->only(['name', 'phone'])->toArray();
 
         if (isset($data['new_password'])) {
-            if (!Hash::check($data['current_password'], $user->password)) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'current_password' => ['كلمة المرور الحالية غير صحيحة']
+            if (! Hash::check($data['current_password'], $user->password)) {
+                throw ValidationException::withMessages([
+                    'current_password' => ['كلمة المرور الحالية غير صحيحة'],
                 ]);
             }
             $updateData['password'] = Hash::make($data['new_password']);
@@ -70,7 +71,7 @@ class AuthService
                 Storage::disk('public')->delete($oldPath);
             }
             $path = $profileImage->store('avatars', 'public');
-            $updateData['profile_image'] = '/storage/' . $path;
+            $updateData['profile_image'] = '/storage/'.$path;
         }
 
         $user->update($updateData);

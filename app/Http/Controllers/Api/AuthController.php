@@ -9,6 +9,10 @@ use App\Http\Requests\Api\Auth\UpdateProfileRequest;
 use App\Services\AuthService;
 use App\Traits\ApiResponder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -24,19 +28,31 @@ class AuthController extends Controller
         return $this->success([
             'user' => $user,
             'token' => $token,
-            'requiresVerification' => !$user->is_verified,
+            'requiresVerification' => ! $user->is_verified,
         ], 'تم التسجيل بنجاح', 201);
     }
 
     public function login(LoginRequest $request)
     {
-        $user = $this->authService->login($request->validated());
-        $token = $user->createToken('auth_token')->plainTextToken;
+        try {
+            $user = $this->authService->login($request->validated());
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        return $this->success([
-            'user' => $user,
-            'token' => $token,
-        ], 'تم تسجيل الدخول بنجاح');
+            return $this->success([
+                'user' => $user,
+                'token' => $token,
+            ], 'تم تسجيل الدخول بنجاح');
+        } catch (ValidationException $e) {
+            return $this->error($e->getMessage(), 422, $e->errors());
+        } catch (\Throwable $e) {
+            // Log the error for debugging
+            Log::error('Login Error: '.$e->getMessage(), [
+                'email' => $request->email,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return $this->error('حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة لاحقاً', 500);
+        }
     }
 
     public function profile(Request $request)
@@ -70,11 +86,11 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $status = \Illuminate\Support\Facades\Password::sendResetLink(
+        $status = Password::sendResetLink(
             $request->only('email')
         );
 
-        if ($status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT) {
+        if ($status === Password::RESET_LINK_SENT) {
             return $this->success(null, 'تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني');
         }
 
@@ -88,17 +104,17 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'token'                 => 'required',
-            'email'                 => 'required|email',
-            'password'              => 'required|min:8|confirmed',
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
             'password_confirmation' => 'required',
         ]);
 
-        $status = \Illuminate\Support\Facades\Password::reset(
+        $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->forceFill([
-                    'password' => \Illuminate\Support\Facades\Hash::make($password),
+                    'password' => Hash::make($password),
                 ])->save();
 
                 // Revoke all tokens to force re-login
@@ -106,7 +122,7 @@ class AuthController extends Controller
             }
         );
 
-        if ($status === \Illuminate\Support\Facades\Password::PASSWORD_RESET) {
+        if ($status === Password::PASSWORD_RESET) {
             return $this->success(null, 'تم تغيير كلمة المرور بنجاح، يمكنك تسجيل الدخول الآن');
         }
 
