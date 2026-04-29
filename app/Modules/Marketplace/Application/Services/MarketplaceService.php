@@ -155,7 +155,10 @@ class MarketplaceService
      */
     public function createStore($user, array $data, ?UploadedFile $cover = null): Store
     {
-        $store = Store::create(array_merge($data, ['user_id' => $user->id]));
+        $store = Store::create(array_merge(
+            Arr::except($data, ['cover_image']),
+            ['user_id' => $user->id]
+        ));
 
         if ($cover) {
             $store->addMedia($cover)->toMediaCollection('cover');
@@ -222,7 +225,7 @@ class MarketplaceService
             $store->addMedia($cover)->toMediaCollection('cover');
         }
 
-        $store->update($data);
+        $store->update(Arr::except($data, ['cover_image']));
 
         return $store->fresh(['media']);
     }
