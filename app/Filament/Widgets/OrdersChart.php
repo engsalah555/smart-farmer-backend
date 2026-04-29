@@ -11,7 +11,7 @@ class OrdersChart extends ChartWidget
 {
     protected ?string $heading = 'نمو المبيعات الشهري';
     protected static ?int $sort = 2;
-    protected static ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '30s';
     protected int | string | array $columnSpan = [
         'md' => 2,
         'xl' => 2,
