@@ -96,7 +96,7 @@ class MarketplaceService
             Cache::forget('marketplace_featured_products');
         }
 
-        return $product->load(['media', 'catalog:id,name']);
+        return $product->load(['media', 'catalog:id,name', 'store:id,user_id,store_name,address', 'store.user:id,phone']);
     }
 
     /**
@@ -124,7 +124,7 @@ class MarketplaceService
             Cache::forget('marketplace_featured_products');
         }
 
-        return $product->load(['media', 'catalog:id,name']);
+        return $product->load(['media', 'catalog:id,name', 'store:id,user_id,store_name,address', 'store.user:id,phone']);
     }
 
     /**
@@ -151,7 +151,7 @@ class MarketplaceService
         return $user->store()
             ->with([
                 'catalogs' => fn ($q) => $q->withCount('products')->ordered()->with(['media']),
-                'products' => fn ($q) => $q->with('media')->latest(),
+                'products' => fn ($q) => $q->with(['media', 'store:id,user_id,store_name,address', 'store.user:id,phone'])->latest(),
                 'media',
             ])
             ->withCount(['products', 'catalogs'])
