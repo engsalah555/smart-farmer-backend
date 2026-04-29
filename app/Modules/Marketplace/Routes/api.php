@@ -28,13 +28,13 @@ Route::prefix('marketplace')->group(function () {
         Route::prefix('seller')->middleware(['can:sell', 'store_owner'])->group(function () {
             Route::get('/products', [SellerProductController::class, 'index']);
             Route::post('/products', [SellerProductController::class, 'store']);
-            Route::match(['POST', 'PUT'], '/products/{product}', [SellerProductController::class, 'update']);
+            Route::post('/products/{product}', [SellerProductController::class, 'update']);
             Route::delete('/products/{product}', [SellerProductController::class, 'destroy']);
             Route::delete('/products/{product}/media/{mediaId}', [ProductMediaController::class, 'destroy']);
 
             Route::get('/catalogs', [CatalogController::class, 'index']);
             Route::post('/catalogs', [CatalogController::class, 'store']);
-            Route::match(['POST', 'PUT'], '/catalogs/{catalog}', [CatalogController::class, 'update']);
+            Route::post('/catalogs/{catalog}', [CatalogController::class, 'update']);
             Route::delete('/catalogs/{catalog}', [CatalogController::class, 'destroy']);
             Route::post('/catalogs/{catalog}/assign-products', [CatalogController::class, 'assignProducts']);
 

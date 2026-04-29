@@ -13,7 +13,7 @@ class ProductRequest extends FormRequest
 
     public function rules()
     {
-        $isUpdate = $this->isMethod('PUT') || $this->isMethod('PATCH') || $this->has('_method');
+        $isUpdate = $this->route('product') !== null;
 
         return [
             'name' => $isUpdate ? 'sometimes|required|string|max:255' : 'required|string|max:255',
