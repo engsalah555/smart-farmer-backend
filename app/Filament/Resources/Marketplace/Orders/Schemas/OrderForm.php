@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\Marketplace\Orders\Schemas;
 
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class OrderForm
@@ -41,12 +41,12 @@ class OrderForm
                                 Select::make('status')
                                     ->label('حالة الطلب')
                                     ->options([
-                                        'pending'    => 'قيد الانتظار',
-                                        'confirmed'  => 'تم التأكيد',
+                                        'pending' => 'قيد الانتظار',
+                                        'confirmed' => 'تم التأكيد',
                                         'processing' => 'قيد التجهيز',
-                                        'shipped'    => 'تم الشحن',
-                                        'delivered'  => 'تم التوصيل',
-                                        'cancelled'  => 'ملغي',
+                                        'shipped' => 'تم الشحن',
+                                        'delivered' => 'تم التوصيل',
+                                        'cancelled' => 'ملغي',
                                     ])
                                     ->required(),
                             ]),

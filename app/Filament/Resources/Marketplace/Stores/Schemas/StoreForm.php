@@ -3,13 +3,13 @@
 namespace App\Filament\Resources\Marketplace\Stores\Schemas;
 
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class StoreForm
 {
@@ -27,13 +27,13 @@ class StoreForm
                                     ->label('صاحب المتجر')
                                     ->required()
                                     ->searchable(),
-                                
+
                                 TextInput::make('store_name')
                                     ->label('اسم المتجر')
                                     ->required()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
-                                
+                                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+
                                 TextInput::make('slug')
                                     ->label('الرابط المختصر (Slug)')
                                     ->required()
@@ -71,7 +71,7 @@ class StoreForm
                         TextInput::make('address')
                             ->label('العنوان')
                             ->placeholder('مثال: صنعاء - شارع الخمسين'),
-                        
+
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('latitude')
@@ -93,7 +93,7 @@ class StoreForm
                                     ->disk('public')
                                     ->directory('stores/logos')
                                     ->maxSize(1024),
-                                
+
                                 FileUpload::make('cover')
                                     ->label('غلاف المتجر')
                                     ->image()
