@@ -45,7 +45,7 @@ class CheckStoreOwnership
         $storeId = $user->store->id;
 
         // 3. Check Product Ownership
-        $product = $request->route('product');
+        $product = $request->route('product') ?? $request->route('id');
         if ($product) {
             $pStoreId = is_object($product) ? $product->store_id : DB::table('products')
                 ->where('id', $product)

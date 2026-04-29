@@ -28,7 +28,7 @@ Route::prefix('marketplace')->group(function () {
         Route::prefix('seller')->middleware(['can:sell', 'store_owner'])->group(function () {
             Route::get('/products', [SellerProductController::class, 'index']);
             Route::post('/products', [SellerProductController::class, 'store']);
-            Route::post('/products/{product}', [SellerProductController::class, 'update']);
+            Route::post('/products-update/{id}', [SellerProductController::class, 'update']);
             Route::delete('/products/{product}', [SellerProductController::class, 'destroy']);
             Route::delete('/products/{product}/media/{mediaId}', [ProductMediaController::class, 'destroy']);
 

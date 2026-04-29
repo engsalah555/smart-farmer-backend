@@ -54,10 +54,11 @@ class ProductController extends Controller
     }
 
     /**
-     * POST /marketplace/seller/products/{product} (مع _method=PUT)
+     * POST /marketplace/seller/products-update/{id}
      */
-    public function update(ProductRequest $request, Product $product): JsonResponse
+    public function update(ProductRequest $request, string $id): JsonResponse
     {
+        $product = Product::where('id', $id)->orWhere('slug', $id)->firstOrFail();
         $store = $request->user()->store;
 
         // التحقق من الكتالوج فقط، أما ملكية المنتج فيفحصها الـ Middleware
