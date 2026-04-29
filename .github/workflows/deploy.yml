@@ -21,7 +21,7 @@ jobs:
           coverage: none
 
       - name: Install Composer Dependencies
-        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
 
       - name: Install Node Dependencies & Build
         run: |
@@ -35,6 +35,7 @@ jobs:
           ARGS: "-rlgoDzvc -i --delete"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: 65002
           TARGET: ${{ secrets.REMOTE_PATH }}
           EXCLUDE: "/.git/, /.github/, /node_modules/, /storage/logs/, /storage/framework/cache/, /storage/framework/sessions/, /storage/framework/views/, /.env"
 
@@ -43,6 +44,7 @@ jobs:
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
+          port: 65002
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ${{ secrets.REMOTE_PATH }}
