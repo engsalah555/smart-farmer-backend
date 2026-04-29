@@ -13,7 +13,7 @@ class EloquentPostRepository implements PostRepositoryInterface
     public function getAll(User $user, ?string $search = null, int $perPage = 10): LengthAwarePaginator
     {
         $userId = $user->id;
-        $query = Post::with(['user:id,name,profile_image,is_verified'])
+        $query = Post::with(['user:id,name,profile_image,profile_photo_path,is_verified'])
             ->withCount('comments')
             ->where('is_hidden', false)
             ->withExists(['likes as is_liked' => function ($query) use ($userId) {
@@ -38,7 +38,7 @@ class EloquentPostRepository implements PostRepositoryInterface
         $userId = $user->id;
         $savedPostIds = SavedPost::where('user_id', $userId)->pluck('post_id');
 
-        return Post::with(['user:id,name,profile_image,is_verified'])
+        return Post::with(['user:id,name,profile_image,profile_photo_path,is_verified'])
             ->withCount('comments')
             ->where('is_hidden', false) // ✅ Exclude hidden posts
             ->withExists(['likes as is_liked' => function ($query) use ($userId) {
@@ -55,7 +55,7 @@ class EloquentPostRepository implements PostRepositoryInterface
     public function getByUser(User $user, int $perPage = 10): LengthAwarePaginator
     {
         $userId = $user->id;
-        return Post::with(['user:id,name,profile_image,is_verified'])
+        return Post::with(['user:id,name,profile_image,profile_photo_path,is_verified'])
             ->withCount('comments')
             ->withExists(['likes as is_liked' => function ($query) use ($userId) {
                 $query->where('user_id', $userId);
@@ -121,7 +121,7 @@ class EloquentPostRepository implements PostRepositoryInterface
     public function getActivity(User $user, int $perPage = 10): LengthAwarePaginator
     {
         $userId = $user->id;
-        return Post::with(['user:id,name,profile_image,is_verified'])
+        return Post::with(['user:id,name,profile_image,profile_photo_path,is_verified'])
             ->withCount('comments')
             ->where('is_hidden', false) // ✅ Exclude hidden posts
             ->withExists(['likes as is_liked' => function ($query) use ($userId) {

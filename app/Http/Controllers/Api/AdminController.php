@@ -41,7 +41,7 @@ class AdminController extends Controller
         $perPage = min((int) $request->input('per_page', 20), 100);
 
         $users = User::with('store')
-            ->select(['id', 'name', 'email', 'user_type', 'phone', 'is_verified', 'created_at'])
+            ->select(['id', 'name', 'email', 'user_type', 'phone', 'profile_image', 'is_verified', 'created_at'])
             ->paginate($perPage);
 
         return response()->json([
@@ -98,7 +98,7 @@ class AdminController extends Controller
         ]);
 
         return $this->success(
-            ['is_verified' => $user->is_verified],
+            $user,
             $user->is_verified ? 'تم توثيق الحساب بنجاح' : 'تم إلغاء توثيق الحساب'
         );
     }
