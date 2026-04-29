@@ -82,7 +82,7 @@ class MarketplaceService
             $data['payment_methods'] = $data['paymentMethods'];
         }
 
-        $product = $store->products()->create(Arr::except($data, ['image', 'images', 'main_image', 'gallery', 'paymentMethods']));
+        $product = $store->products()->create(Arr::except($data, ['image', 'images', 'main_image', 'gallery', 'paymentMethods', 'other_images']));
 
         if ($mainImage) {
             $product->addMedia($mainImage)->toMediaCollection('main_image');
@@ -108,7 +108,7 @@ class MarketplaceService
             $data['payment_methods'] = $data['paymentMethods'];
         }
 
-        $product->update(Arr::except($data, ['image', 'images', 'paymentMethods']));
+        $product->update(Arr::except($data, ['image', 'images', 'paymentMethods', 'other_images']));
 
         if ($mainImage) {
             $product->clearMediaCollection('main_image');
