@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\CropGuide;
+use App\Modules\PlantGuide\Domain\Models\CropGuide;
 use Illuminate\Database\Seeder;
 
 class CropGuideSeeder extends Seeder

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\CropGuide;
+use App\Modules\PlantGuide\Domain\Models\CropGuide;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 

@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         // إضافة بيانات النباتات اليمنية
         $this->call([
             PlantSeeder::class,
+            YemeniCropSeeder::class,
         ]);
     }
 }
