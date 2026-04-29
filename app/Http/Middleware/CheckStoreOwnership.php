@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Modules\Marketplace\Domain\Exceptions\UnauthorizedAccessException;
+use App\Modules\Marketplace\Domain\Models\Product;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -47,9 +48,12 @@ class CheckStoreOwnership
         // 3. Check Product Ownership
         $product = $request->route('product') ?? $request->route('id');
         if ($product) {
-            $pStoreId = is_object($product) ? $product->store_id : \App\Modules\Marketplace\Domain\Models\Product::withoutGlobalScopes()
-                ->where('id', $product)
-                ->orWhere('slug', $product)
+            $pStoreId = is_object($product) ? $product->store_id : Product::withoutGlobalScopes()
+                ->where(function ($q) use ($product) {
+                    $q->where('id', $product)
+                        ->orWhere('slug', $product)
+                        ->orWhere('slug', strtolower(urlencode($product)));
+                })
                 ->value('store_id');
 
             if ($pStoreId && $pStoreId !== $storeId) {
@@ -61,8 +65,11 @@ class CheckStoreOwnership
         $catalog = $request->route('catalog');
         if ($catalog) {
             $cStoreId = is_object($catalog) ? $catalog->store_id : DB::table('store_catalogs')
-                ->where('id', $catalog)
-                ->orWhere('slug', $catalog)
+                ->where(function ($q) use ($catalog) {
+                    $q->where('id', $catalog)
+                        ->orWhere('slug', $catalog)
+                        ->orWhere('slug', strtolower(urlencode($catalog)));
+                })
                 ->value('store_id');
 
             if ($cStoreId && $cStoreId !== $storeId) {

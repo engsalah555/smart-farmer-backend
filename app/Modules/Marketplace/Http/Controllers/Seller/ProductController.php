@@ -58,7 +58,12 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, string $id): JsonResponse
     {
-        $product = Product::withoutGlobalScopes()->where('id', $id)->orWhere('slug', $id)->firstOrFail();
+        $product = Product::withoutGlobalScopes()
+            ->where(function ($q) use ($id) {
+                $q->where('id', $id)
+                    ->orWhere('slug', $id)
+                    ->orWhere('slug', strtolower(urlencode($id)));
+            })->firstOrFail();
         $store = $request->user()->store;
 
         // التحقق من الكتالوج فقط، أما ملكية المنتج فيفحصها الـ Middleware

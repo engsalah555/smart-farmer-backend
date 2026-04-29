@@ -124,4 +124,15 @@ class StoreCatalog extends Model implements HasMedia
     {
         return 'slug';
     }
+
+    public function resolveRouteBindingQuery($query, $value, $field = null)
+    {
+        $field = $field ?? $this->getRouteKeyName();
+
+        return $query->withoutGlobalScopes()->where(function ($q) use ($value, $field) {
+            $q->where($field, $value)
+                ->orWhere('id', $value)
+                ->orWhere($field, strtolower(urlencode($value)));
+        });
+    }
 }
