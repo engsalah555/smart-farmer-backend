@@ -39,16 +39,28 @@ class StoreController extends Controller
         /** @var User $user */
         $user = $request->user();
         $store = $user->store;
+        $data = $request->validated();
 
-        $updatedStore = $this->marketplaceService->updateStore(
-            $store,
-            $request->validated(),
-            $request->file('cover_image')
-        );
+        if (! $store) {
+            // Fallback for required field if not provided in update (creation mode)
+            $data['store_type'] = $data['store_type'] ?? 'general';
+            
+            $updatedStore = $this->marketplaceService->createStore(
+                $user,
+                $data,
+                $request->file('cover_image')
+            );
+        } else {
+            $updatedStore = $this->marketplaceService->updateStore(
+                $store,
+                $data,
+                $request->file('cover_image')
+            );
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'تم تحديث بيانات المتجر بنجاح',
+            'message' => $store ? 'تم تحديث بيانات المتجر بنجاح' : 'تم إنشاء المتجر بنجاح',
             'data' => new StoreResource($updatedStore),
         ]);
     }
