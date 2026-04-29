@@ -41,7 +41,7 @@ class StoreCatalog extends Model implements HasMedia
     /**
      * Get the catalog image URL.
      */
-    public function getImageUrlAttribute($value)
+    public function getImageUrlAttribute(?string $value)
     {
         if ($value) {
             if (filter_var($value, FILTER_VALIDATE_URL)) {

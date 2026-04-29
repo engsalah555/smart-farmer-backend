@@ -95,7 +95,7 @@ class PlantSeeder extends Seeder
         }
     }
 
-    private function extractRange($text)
+    private function extractRange(string $text): array
     {
         preg_match_all('/(\d+\.?\d*)/', $text, $matches);
         if (isset($matches[0]) && count($matches[0]) >= 2) {
@@ -108,7 +108,7 @@ class PlantSeeder extends Seeder
         return ['min' => null, 'max' => null];
     }
 
-    private function generateGrowthGuide($p)
+    private function generateGrowthGuide(array $p): string
     {
         return 'التعريف العلمي: '.($p['scientific_definition'] ?? '-')."\n\n".
                'ظروف النمو: '.($p['growing_conditions'] ?? '-')."\n\n".
@@ -117,7 +117,7 @@ class PlantSeeder extends Seeder
                'الحصاد والتخزين: '.($p['harvesting_and_storage'] ?? '-');
     }
 
-    private function guessLifeCycle($harvestTime)
+    private function guessLifeCycle(string $harvestTime): string
     {
         if (Str::contains($harvestTime, ['أيام', 'شهر'])) {
             return 'قصيرة';
@@ -126,7 +126,7 @@ class PlantSeeder extends Seeder
         return 'متوسطة';
     }
 
-    private function getCategoryIcon($name)
+    private function getCategoryIcon(string $name): string
     {
         $icons = [
             'حبوب' => 'wheat',

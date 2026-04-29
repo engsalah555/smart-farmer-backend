@@ -2,6 +2,7 @@
 
 namespace App\Modules\Marketplace\Application\Services;
 
+use App\Models\User;
 use App\Modules\Marketplace\Domain\Exceptions\BusinessLogicException;
 use App\Modules\Marketplace\Domain\Exceptions\ResourceNotFoundException;
 use App\Modules\Marketplace\Domain\Exceptions\UnauthorizedAccessException;
@@ -146,7 +147,7 @@ class MarketplaceService
     /**
      * جلب متجر البائع الحالي مع كل علاقاته.
      */
-    public function getSellerStore($user): ?Store
+    public function getSellerStore(User $user): ?Store
     {
         return $user->store()
             ->with([
@@ -161,7 +162,7 @@ class MarketplaceService
     /**
      * إنشاء متجر جديد للمستخدم.
      */
-    public function createStore($user, array $data, ?UploadedFile $cover = null): Store
+    public function createStore(User $user, array $data, ?UploadedFile $cover = null): Store
     {
         $store = Store::create(array_merge(
             Arr::except($data, ['cover_image']),
@@ -331,7 +332,7 @@ class MarketplaceService
     /**
      * إتمام طلب جديد داخل Transaction.
      */
-    public function placeOrder($user, array $data, ?UploadedFile $receiptImage = null): Order
+    public function placeOrder(User $user, array $data, ?UploadedFile $receiptImage = null): Order
     {
         Log::info('Placing split order', ['user_id' => $user->id]);
 
@@ -434,7 +435,7 @@ class MarketplaceService
     /**
      * إلغاء الطلب.
      */
-    public function cancelOrder(Order $order, $userId): Order
+    public function cancelOrder(Order $order, int $userId): Order
     {
         // التحقق من الصلاحية: صاحب الطلب أو صاحب المتجر
         if ($order->user_id !== $userId && $order->store->user_id !== $userId) {
