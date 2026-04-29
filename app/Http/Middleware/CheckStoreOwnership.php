@@ -47,7 +47,7 @@ class CheckStoreOwnership
         // 3. Check Product Ownership
         $product = $request->route('product') ?? $request->route('id');
         if ($product) {
-            $pStoreId = is_object($product) ? $product->store_id : DB::table('products')
+            $pStoreId = is_object($product) ? $product->store_id : \App\Modules\Marketplace\Domain\Models\Product::withoutGlobalScopes()
                 ->where('id', $product)
                 ->orWhere('slug', $product)
                 ->value('store_id');
