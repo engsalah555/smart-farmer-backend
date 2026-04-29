@@ -48,12 +48,14 @@ class Product extends Model implements HasMedia
         'is_featured',
         'image_url',
         'image',
+        'payment_methods',
     ];
 
     protected $casts = [
         'price' => 'float',
         'stock_quantity' => 'integer',
         'is_featured' => 'boolean',
+        'payment_methods' => 'array',
     ];
 
     // =========================================================

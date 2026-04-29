@@ -78,7 +78,11 @@ class MarketplaceService
      */
     public function createProduct(Store $store, array $data, ?UploadedFile $mainImage = null, array $otherImages = []): Product
     {
-        $product = $store->products()->create(Arr::except($data, ['image', 'images', 'main_image', 'gallery']));
+        if (isset($data['paymentMethods'])) {
+            $data['payment_methods'] = $data['paymentMethods'];
+        }
+
+        $product = $store->products()->create(Arr::except($data, ['image', 'images', 'main_image', 'gallery', 'paymentMethods']));
 
         if ($mainImage) {
             $product->addMedia($mainImage)->toMediaCollection('main_image');
@@ -100,7 +104,11 @@ class MarketplaceService
      */
     public function updateProduct(Product $product, array $data, ?UploadedFile $mainImage = null, array $otherImages = []): Product
     {
-        $product->update(Arr::except($data, ['image', 'images']));
+        if (isset($data['paymentMethods'])) {
+            $data['payment_methods'] = $data['paymentMethods'];
+        }
+
+        $product->update(Arr::except($data, ['image', 'images', 'paymentMethods']));
 
         if ($mainImage) {
             $product->clearMediaCollection('main_image');

@@ -26,6 +26,8 @@ class ProductRequest extends FormRequest
             'is_featured' => 'nullable|boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'other_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'paymentMethods' => 'nullable|array',
+            'paymentMethods.*' => 'string',
         ];
     }
 
