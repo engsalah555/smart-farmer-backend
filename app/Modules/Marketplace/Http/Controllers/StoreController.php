@@ -5,11 +5,11 @@ namespace App\Modules\Marketplace\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\StoreResource;
-use App\Modules\Marketplace\Domain\Models\Store;
 use App\Modules\Marketplace\Application\Services\MarketplaceService;
+use App\Modules\Marketplace\Domain\Models\Store;
+use App\Traits\ApiResponder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Traits\ApiResponder;
 
 class StoreController extends Controller
 {
@@ -23,11 +23,12 @@ class StoreController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = (int) $request->input('per_page', 20);
-        $query   = $request->input('query');
+        $query = $request->input('query');
         $latitude = $request->input('latitude') !== null ? (float) $request->input('latitude') : null;
         $longitude = $request->input('longitude') !== null ? (float) $request->input('longitude') : null;
 
-        $stores  = $this->marketplaceService->getAllStores($perPage, $query, $latitude, $longitude);
+        $stores = $this->marketplaceService->getAllStores($perPage, $query, $latitude, $longitude);
+
         return $this->paginated($stores, StoreResource::class);
     }
 
@@ -40,7 +41,7 @@ class StoreController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new StoreResource($store),
+            'data' => new StoreResource($store),
         ]);
     }
 
@@ -57,11 +58,11 @@ class StoreController extends Controller
             ->withCount('products')
             ->first();
 
-        if (!$store) {
+        if (! $store) {
             return response()->json(['success' => false, 'message' => 'المتجر غير موجود'], 404);
         }
 
-        $perPage   = (int) $request->input('per_page', 20);
+        $perPage = (int) $request->input('per_page', 20);
         $catalogId = $request->input('catalog_id') !== null ? (int) $request->input('catalog_id') : null;
 
         $paginated = $this->marketplaceService->getStoreProducts($store, $catalogId, $perPage);

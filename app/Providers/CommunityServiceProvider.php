@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Modules\Community\Application\Services\PostService;
 use App\Modules\Community\Domain\Repositories\PostRepositoryInterface;
 use App\Modules\Community\Infrastructure\Repositories\EloquentPostRepository;
-use App\Modules\Community\Application\Services\PostService;
+use Illuminate\Support\ServiceProvider;
 
 class CommunityServiceProvider extends ServiceProvider
 {

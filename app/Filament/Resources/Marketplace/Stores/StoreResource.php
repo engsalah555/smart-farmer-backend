@@ -8,10 +8,8 @@ use App\Filament\Resources\Marketplace\Stores\Pages\ListStores;
 use App\Filament\Resources\Marketplace\Stores\Schemas\StoreForm;
 use App\Filament\Resources\Marketplace\Stores\Tables\StoresTable;
 use App\Modules\Marketplace\Domain\Models\Store;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class StoreResource extends Resource

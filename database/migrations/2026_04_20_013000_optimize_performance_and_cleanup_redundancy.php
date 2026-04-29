@@ -8,7 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * تحسينات الأداء وتنظيف الجداول:
      * 1. إضافة Indexes لسرعة التقارير (created_at).
      * 2. حذف الأعمدة المتكررة التي استبدلت بـ Media Library.

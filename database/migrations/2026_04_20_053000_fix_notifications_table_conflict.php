@@ -1,9 +1,9 @@
 <?php
- 
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
- 
+
 return new class extends Migration
 {
     /**
@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Rename existing custom notifications table
-        if (Schema::hasTable('notifications') && !Schema::hasColumn('notifications', 'notifiable_type')) {
+        if (Schema::hasTable('notifications') && ! Schema::hasColumn('notifications', 'notifiable_type')) {
             Schema::rename('notifications', 'app_notifications');
         }
- 
+
         // 2. Create standard Laravel notifications table
-        if (!Schema::hasTable('notifications')) {
+        if (! Schema::hasTable('notifications')) {
             Schema::create('notifications', function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 $table->string('type');
@@ -28,7 +28,7 @@ return new class extends Migration
             });
         }
     }
- 
+
     /**
      * Reverse the migrations.
      */

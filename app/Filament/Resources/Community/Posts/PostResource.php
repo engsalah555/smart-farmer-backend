@@ -8,10 +8,8 @@ use App\Filament\Resources\Community\Posts\Pages\ListPosts;
 use App\Filament\Resources\Community\Posts\Schemas\PostForm;
 use App\Filament\Resources\Community\Posts\Tables\PostsTable;
 use App\Modules\Community\Domain\Models\Post;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class PostResource extends Resource

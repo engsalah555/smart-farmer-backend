@@ -2,6 +2,7 @@
 
 namespace App\Modules\Iot\Domain\Models;
 
+use App\Events\DeviceStatusUpdated;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,7 +52,7 @@ class IotDevice extends Model
     {
         static::updated(function ($device) {
             if ($device->wasChanged('status')) {
-                event(new \App\Events\DeviceStatusUpdated($device));
+                event(new DeviceStatusUpdated($device));
             }
         });
     }

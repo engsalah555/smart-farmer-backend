@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\CropGuide;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 
 class YemeniCropSeeder extends Seeder
@@ -17,9 +17,10 @@ class YemeniCropSeeder extends Seeder
         CropGuide::truncate();
 
         $jsonPath = database_path('seeders/yemeni_plants.json');
-        
-        if (!File::exists($jsonPath)) {
+
+        if (! File::exists($jsonPath)) {
             $this->command->error("JSON file not found at: {$jsonPath}");
+
             return;
         }
 
@@ -51,7 +52,7 @@ class YemeniCropSeeder extends Seeder
                     'image_url' => $plant['image_url'] ?? null,
                 ]);
             }
-            $this->command->info("Successfully seeded " . count($data['plants']) . " crops.");
+            $this->command->info('Successfully seeded '.count($data['plants']).' crops.');
         } else {
             $this->command->error("No 'plants' data found in JSON.");
         }

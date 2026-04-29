@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Modules\Farm\Application\Services\CropService;
 use App\Modules\Farm\Domain\Repositories\CropRepositoryInterface;
 use App\Modules\Farm\Infrastructure\Repositories\EloquentCropRepository;
-use App\Modules\Farm\Application\Services\CropService;
+use Illuminate\Support\ServiceProvider;
 
 class FarmServiceProvider extends ServiceProvider
 {

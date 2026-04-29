@@ -2,11 +2,13 @@
 
 namespace App\Modules\Marketplace\Domain\Models;
 
+use App\Traits\HasStoreScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Builder;
-use App\Traits\HasStoreScope;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -22,12 +24,13 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property float $price
  * @property string $unit
  * @property int $stock_quantity
- * @property float|null $reviews_avg_rating  (مُوجَد بواسطة withAvg)
- * @property int|null $reviews_count          (مُوجَد بواسطة withCount)
+ * @property float|null $reviews_avg_rating (مُوجَد بواسطة withAvg)
+ * @property int|null $reviews_count (مُوجَد بواسطة withCount)
  */
 class Product extends Model implements HasMedia
 {
-    use SoftDeletes, InteractsWithMedia, HasStoreScope;
+    use HasStoreScope, InteractsWithMedia, SoftDeletes;
+
     /**
      * لا نستخدم $appends لتجنب N+1 Queries.
      * avg_rating و reviews_count تُحسب عبر withAvg/withCount في الـ Service.
@@ -57,18 +60,17 @@ class Product extends Model implements HasMedia
     // RELATIONSHIPS
     // =========================================================
 
-    public function store(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
     }
 
-    public function catalog(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function catalog(): BelongsTo
     {
         return $this->belongsTo(StoreCatalog::class, 'catalog_id');
     }
 
-
-    public function reviews(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function reviews(): HasMany
     {
         return $this->hasMany(ProductReview::class);
     }
@@ -113,6 +115,7 @@ class Product extends Model implements HasMedia
         if (array_key_exists('reviews_avg_rating', $this->attributes)) {
             return round((float) $this->attributes['reviews_avg_rating'], 1);
         }
+
         return round((float) ($this->reviews()->avg('rating') ?? 0), 1);
     }
 
@@ -125,6 +128,7 @@ class Product extends Model implements HasMedia
         if (array_key_exists('reviews_count', $this->attributes)) {
             return (int) $this->attributes['reviews_count'];
         }
+
         return $this->reviews()->count();
     }
 
@@ -144,7 +148,7 @@ class Product extends Model implements HasMedia
                 return asset($path);
             }
 
-            return asset('storage/' . $path);
+            return asset('storage/'.$path);
         }
 
         // Always fallback to Spatie MediaLibrary if column is empty

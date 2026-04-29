@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('users', 'profile_photo_path')) {
+        if (! Schema::hasColumn('users', 'profile_photo_path')) {
             Schema::table('users', function (Blueprint $table) {
                 $table->string('profile_photo_path', 2048)->nullable()->after('profile_image');
             });
         }
 
-        if (!Schema::hasColumn('products', 'image_url')) {
+        if (! Schema::hasColumn('products', 'image_url')) {
             Schema::table('products', function (Blueprint $table) {
                 $table->string('image_url')->nullable()->after('stock_quantity');
             });

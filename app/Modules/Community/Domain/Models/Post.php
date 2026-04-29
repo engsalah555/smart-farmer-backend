@@ -26,9 +26,9 @@ class Post extends Model implements HasMedia
     ];
 
     protected $casts = [
-        'is_hidden'    => 'boolean',
-        'likes_count'  => 'integer',
-        'reports_count'=> 'integer',
+        'is_hidden' => 'boolean',
+        'likes_count' => 'integer',
+        'reports_count' => 'integer',
     ];
 
     public function user(): BelongsTo
@@ -65,7 +65,7 @@ class Post extends Model implements HasMedia
         // 1) العمود image_url له قيمة
         $resolvedValue = $value ?: ($this->attributes['image'] ?? null);
 
-        if ($resolvedValue && !empty($resolvedValue)) {
+        if ($resolvedValue && ! empty($resolvedValue)) {
             // URL كامل يبدأ بـ http → نُعيده مباشرةً
             if (filter_var($resolvedValue, FILTER_VALIDATE_URL)) {
                 return $resolvedValue;
@@ -78,14 +78,17 @@ class Post extends Model implements HasMedia
                 return url($path); // ✅ url('storage/xxx') = http://domain/storage/xxx
             }
 
-            return url('storage/' . $path);
+            return url('storage/'.$path);
         }
 
         // ✅ الرجوع إلى MediaLibrary إذا لا يوجد مسار في العمود
         $mediaUrl = $this->getFirstMediaUrl('post_image', 'thumb');
-        if ($mediaUrl) return $mediaUrl;
+        if ($mediaUrl) {
+            return $mediaUrl;
+        }
 
         $mediaUrl = $this->getFirstMediaUrl('post_image');
+
         return $mediaUrl ?: null;
     }
 
@@ -102,4 +105,3 @@ class Post extends Model implements HasMedia
             ->performOnCollections('post_image');
     }
 }
-

@@ -8,9 +8,7 @@ use App\Http\Requests\Api\Iot\ToggleIrrigationRequest;
 use App\Http\Requests\Api\Iot\UpdateAutoIrrigationRequest;
 use App\Modules\Iot\Application\Services\IotService;
 use App\Traits\ApiResponder;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class IotController extends Controller
 {
@@ -24,11 +22,12 @@ class IotController extends Controller
     public function getDeviceStatus()
     {
         $user = Auth::user();
-        
+
         // ✅ Sync real-time data from Firebase
         $this->iotService->syncFromFirebase($user);
 
         $status = $this->iotService->getStatus($user);
+
         return $this->success($status);
     }
 
@@ -53,7 +52,7 @@ class IotController extends Controller
     public function updateAutoIrrigation(UpdateAutoIrrigationRequest $request)
     {
         $device = $this->iotService->updateAutoIrrigation(
-            Auth::user(), 
+            Auth::user(),
             $request->auto_irrigation,
             $request->input('auto_threshold', 30)
         );
@@ -72,9 +71,10 @@ class IotController extends Controller
     public function getSchedules()
     {
         $device = Auth::user()->iotDevice;
-        if (!$device) {
+        if (! $device) {
             return $this->error('لم يتم العثور على جهاز مرتبط بهذا الحساب', 404);
         }
+
         return $this->success($device->schedules);
     }
 
@@ -88,8 +88,7 @@ class IotController extends Controller
     public function deleteSchedule($id)
     {
         $this->iotService->deleteSchedule(Auth::user(), $id);
+
         return $this->success(null, 'تم حذف الجدول بنجاح');
     }
-
-
 }

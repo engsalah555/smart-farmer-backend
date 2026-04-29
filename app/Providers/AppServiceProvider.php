@@ -2,20 +2,21 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Gate;
 use App\Models\User;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
+use App\Modules\Marketplace\Domain\Models\Order;
 use App\Modules\Marketplace\Domain\Models\Product;
 use App\Modules\Marketplace\Domain\Models\Store;
-use App\Modules\Marketplace\Domain\Models\Order;
+use App\Policies\OrderPolicy;
 use App\Policies\ProductPolicy;
 use App\Policies\StorePolicy;
-use App\Policies\OrderPolicy;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -41,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
         // ─── تحسين الأداء: حد أقصى لعدد Queries لكل Request في Production ───
         if (app()->isProduction()) {
             DB::whenQueryingForLongerThan(1000, function () {
-                \Illuminate\Support\Facades\Log::warning('Slow query detected (>1s)');
+                Log::warning('Slow query detected (>1s)');
             });
         }
 

@@ -35,7 +35,7 @@ return new class extends Migration
                 'watering_schedule',
                 'sunlight_requirement',
                 'temperature',
-                'humidity'
+                'humidity',
             ]);
         });
     }

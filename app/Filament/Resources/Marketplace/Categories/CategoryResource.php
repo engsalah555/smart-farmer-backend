@@ -8,10 +8,8 @@ use App\Filament\Resources\Marketplace\Categories\Pages\ListCategories;
 use App\Filament\Resources\Marketplace\Categories\Schemas\CategoryForm;
 use App\Filament\Resources\Marketplace\Categories\Tables\CategoriesTable;
 use App\Modules\Marketplace\Domain\Models\StoreCatalog;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class CategoryResource extends Resource

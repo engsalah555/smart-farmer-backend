@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use App\Modules\Marketplace\Domain\Models\Product;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Storage;
 
 return new class extends Migration
 {
@@ -14,13 +13,13 @@ return new class extends Migration
     {
         // Get all files in public/storage/products
         $files = Storage::disk('public')->files('products');
-        
+
         if (empty($files)) {
             return;
         }
 
         $products = Product::whereNull('image_url')->get();
-        
+
         foreach ($products as $index => $product) {
             // Assign an image if available
             if (isset($files[$index])) {

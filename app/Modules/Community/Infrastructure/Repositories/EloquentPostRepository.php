@@ -26,7 +26,7 @@ class EloquentPostRepository implements PostRepositoryInterface
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('content', 'LIKE', "%{$search}%");
+                    ->orWhere('content', 'LIKE', "%{$search}%");
             });
         }
 
@@ -55,6 +55,7 @@ class EloquentPostRepository implements PostRepositoryInterface
     public function getByUser(User $user, int $perPage = 10): LengthAwarePaginator
     {
         $userId = $user->id;
+
         return Post::with(['user:id,name,profile_image,profile_photo_path,is_verified'])
             ->withCount('comments')
             ->withExists(['likes as is_liked' => function ($query) use ($userId) {
@@ -96,10 +97,12 @@ class EloquentPostRepository implements PostRepositoryInterface
         if ($like) {
             $like->delete();
             $post->decrement('likes_count');
+
             return false;
         } else {
             $post->likes()->create(['user_id' => $userId]);
             $post->increment('likes_count');
+
             return true;
         }
     }
@@ -111,9 +114,11 @@ class EloquentPostRepository implements PostRepositoryInterface
 
         if ($saved) {
             $saved->delete();
+
             return false;
         } else {
             $post->savedBy()->create(['user_id' => $userId]);
+
             return true;
         }
     }
@@ -121,6 +126,7 @@ class EloquentPostRepository implements PostRepositoryInterface
     public function getActivity(User $user, int $perPage = 10): LengthAwarePaginator
     {
         $userId = $user->id;
+
         return Post::with(['user:id,name,profile_image,profile_photo_path,is_verified'])
             ->withCount('comments')
             ->where('is_hidden', false) // ✅ Exclude hidden posts
@@ -134,9 +140,9 @@ class EloquentPostRepository implements PostRepositoryInterface
                 $query->whereHas('likes', function ($q) use ($userId) {
                     $q->where('user_id', $userId);
                 })
-                ->orWhereHas('comments', function ($q) use ($userId) {
-                    $q->where('user_id', $userId);
-                });
+                    ->orWhereHas('comments', function ($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    });
             })
             ->latest()
             ->paginate($perPage);
@@ -152,12 +158,12 @@ class EloquentPostRepository implements PostRepositoryInterface
 
         if ($report) {
             $post->increment('reports_count');
-            
+
             // Auto-hide if reports reach a certain threshold (e.g., 5)
             if ($post->reports_count >= 5) {
                 $post->update(['is_hidden' => true]);
             }
-            
+
             return true;
         }
 

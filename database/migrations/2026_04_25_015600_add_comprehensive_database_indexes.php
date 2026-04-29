@@ -58,7 +58,7 @@ return new class extends Migration
                 $table->index('user_id', 'idx_product_reviews_user_id');
             }
         });
-        
+
         // 6. Iot Devices Table
         Schema::table('iot_devices', function (Blueprint $table) {
             if (Schema::hasColumn('iot_devices', 'status')) {

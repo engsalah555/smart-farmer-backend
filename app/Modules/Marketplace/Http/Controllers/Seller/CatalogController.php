@@ -5,9 +5,9 @@ namespace App\Modules\Marketplace\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Marketplace\CatalogRequest;
 use App\Http\Resources\CatalogResource;
-use App\Modules\Marketplace\Domain\Models\StoreCatalog;
 use App\Modules\Marketplace\Application\Services\MarketplaceService;
-use App\Modules\Marketplace\Domain\Exceptions\UnauthorizedAccessException;
+use App\Modules\Marketplace\Domain\Models\Product;
+use App\Modules\Marketplace\Domain\Models\StoreCatalog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -21,7 +21,7 @@ class CatalogController extends Controller
     public function index(Request $request): JsonResponse
     {
         $store = $request->user()->store;
-        if (!$store) {
+        if (! $store) {
             return response()->json(['success' => false, 'message' => 'المتجر غير موجود'], 404);
         }
 
@@ -29,7 +29,7 @@ class CatalogController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => CatalogResource::collection($catalogs),
+            'data' => CatalogResource::collection($catalogs),
         ]);
     }
 
@@ -77,7 +77,7 @@ class CatalogController extends Controller
 
         // يمكن إضافة تحقق إضافي هنا لضمان أن الـ product_ids تنتمي لمتجر التاجر
         $store = $request->user()->store;
-        $validProductIds = \App\Modules\Marketplace\Domain\Models\Product::whereIn('id', $request->product_ids)
+        $validProductIds = Product::whereIn('id', $request->product_ids)
             ->where('store_id', $store->id)
             ->pluck('id')
             ->toArray();

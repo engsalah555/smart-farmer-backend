@@ -3,11 +3,12 @@
 namespace App\Modules\Marketplace\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Marketplace\Domain\Models\Order;
+use App\Http\Resources\Marketplace\OrderResource;
 use App\Modules\Marketplace\Application\Services\MarketplaceService;
-use App\Modules\Marketplace\Domain\Exceptions\UnauthorizedAccessException;
+use App\Modules\Marketplace\Domain\Models\Order;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -19,22 +20,22 @@ class OrderController extends Controller
     public function index(Request $request): JsonResponse
     {
         $store = $request->user()->store;
-        if (!$store) {
+        if (! $store) {
             return response()->json(['success' => false, 'message' => 'المتجر غير موجود'], 404);
         }
 
         $perPage = (int) $request->input('per_page', 20);
         $paginated = $this->marketplaceService->getStoreOrders($store, $perPage);
 
-        \Illuminate\Support\Facades\Log::info('Seller orders list', [
+        Log::info('Seller orders list', [
             'store_id' => $store->id,
             'user_id' => $request->user()->id,
             'count' => $paginated->count(),
             'total' => $paginated->total(),
-            'sample_order' => $paginated->first() ? (new \App\Http\Resources\Marketplace\OrderResource($paginated->first()))->toArray($request) : null,
+            'sample_order' => $paginated->first() ? (new OrderResource($paginated->first()))->toArray($request) : null,
         ]);
 
-        return $this->paginated($paginated, \App\Http\Resources\Marketplace\OrderResource::class);
+        return $this->paginated($paginated, OrderResource::class);
     }
 
     /**
@@ -52,8 +53,8 @@ class OrderController extends Controller
         $newStatus = $request->status;
 
         // [SEC-CHECK] منع شحن الطلب إذا كان الدفع بنكي ولم يتم تأكيده
-        if (in_array($newStatus, ['shipped', 'delivered']) && 
-            $order->payment_method === 'bank_transfer' && 
+        if (in_array($newStatus, ['shipped', 'delivered']) &&
+            $order->payment_method === 'bank_transfer' &&
             $order->payment_status === 'pending') {
             return $this->error('لا يمكن شحن الطلب قبل تأكيد استلام الحوالة البنكية', 422);
         }

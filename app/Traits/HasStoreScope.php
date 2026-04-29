@@ -2,8 +2,8 @@
 
 namespace App\Traits;
 
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Builder;
 
 trait HasStoreScope
 {
@@ -17,6 +17,7 @@ trait HasStoreScope
             // But we can reinforce it here if needed.
             if (app()->bound('filament') && Filament::getTenant()) {
                 $builder->where('store_id', Filament::getTenant()->id);
+
                 return;
             }
 
@@ -26,7 +27,7 @@ trait HasStoreScope
 
                 // Only apply if we are in a "management" context for sellers
                 // This prevents sellers from being restricted when they act as buyers on public routes
-                $isSellerManagement = request()->is('api/marketplace/seller/*') || 
+                $isSellerManagement = request()->is('api/marketplace/seller/*') ||
                                      request()->is('seller/*') ||
                                      request()->header('X-Seller-Context') === 'true';
 

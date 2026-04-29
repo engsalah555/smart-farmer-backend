@@ -3,9 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaCleanup extends Command
 {
@@ -32,7 +31,7 @@ class MediaCleanup extends Command
         $dryRun = $this->option('dry-run');
 
         // 1. Run Spatie's built-in cleanup (for orphaned files)
-        if (!$dryRun) {
+        if (! $dryRun) {
             $this->info('Running Spatie media-library:clean...');
             $this->call('media-library:clean', [
                 '--delete-orphaned' => true,
@@ -45,13 +44,13 @@ class MediaCleanup extends Command
         // 2. Clean up media records for non-existent models (orphaned DB records)
         $this->info('Checking for media records with missing models...');
         $orphanedMedia = Media::with('model')->get()->filter(function ($media) {
-            return !$media->model;
+            return ! $media->model;
         });
 
         if ($orphanedMedia->count() > 0) {
             $this->warn("Found {$orphanedMedia->count()} media records with missing models.");
             foreach ($orphanedMedia as $media) {
-                if (!$dryRun) {
+                if (! $dryRun) {
                     $media->delete();
                     $this->line("Deleted media record ID {$media->id} (Model missing)");
                 } else {
@@ -65,9 +64,9 @@ class MediaCleanup extends Command
         // 3. Clean up records with missing physical files
         $this->info('Checking for media records with missing physical files...');
         Media::all()->each(function ($media) use ($dryRun) {
-            if (!file_exists($media->getPath())) {
+            if (! file_exists($media->getPath())) {
                 $this->warn("Media record ID {$media->id} points to non-existent file: {$media->getPath()}");
-                if (!$dryRun) {
+                if (! $dryRun) {
                     $media->delete();
                     $this->line("Deleted broken record ID {$media->id}");
                 } else {

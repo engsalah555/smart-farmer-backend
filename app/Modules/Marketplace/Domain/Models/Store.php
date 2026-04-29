@@ -3,8 +3,10 @@
 namespace App\Modules\Marketplace\Domain\Models;
 
 use App\Models\User;
-
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
@@ -22,9 +24,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string|null $address
  * @property float|null $latitude
  * @property float|null $longitude
- * @property int|null $products_count  (مُوجَد بواسطة withCount)
- * @property int|null $catalogs_count  (مُوجَد بواسطة withCount)
- * 
+ * @property int|null $products_count (مُوجَد بواسطة withCount)
+ * @property int|null $catalogs_count (مُوجَد بواسطة withCount)
+ *
  * - [x] تهيئة البنية التحتية للوسائط
  * - [x] تشغيل Migration جدول الـ `media`
  * - [x] تحديث الموديلات (`Store`, `StoreCatalog`, `Product`) لدعم `MediaLibrary`
@@ -32,7 +34,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  */
 class Store extends Model implements HasMedia
 {
-    use SoftDeletes, InteractsWithMedia;
+    use InteractsWithMedia, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -56,17 +58,17 @@ class Store extends Model implements HasMedia
     // RELATIONSHIPS
     // =========================================================
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'store_id');
     }
 
-    public function reviews(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    public function reviews(): HasManyThrough
     {
         return $this->hasManyThrough(ProductReview::class, Product::class);
     }
@@ -100,7 +102,7 @@ class Store extends Model implements HasMedia
     /**
      * الكتالوجات مرتّبة تلقائياً حسب sort_order ثم تاريخ الإنشاء
      */
-    public function catalogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function catalogs(): HasMany
     {
         return $this->hasMany(StoreCatalog::class)->orderBy('sort_order')->orderBy('created_at');
     }
@@ -134,15 +136,15 @@ class Store extends Model implements HasMedia
     public function scopeNearestTo($query, $latitude, $longitude)
     {
         // 6371 is the radius of the earth in kilometers
-        $haversine = "(6371 * acos(cos(radians(?)) 
+        $haversine = '(6371 * acos(cos(radians(?)) 
                         * cos(radians(latitude)) 
                         * cos(radians(longitude) - radians(?)) 
                         + sin(radians(?)) 
-                        * sin(radians(latitude))))";
+                        * sin(radians(latitude))))';
 
         return $query->select('stores.*')
-                     ->selectRaw("{$haversine} AS distance", [$latitude, $longitude, $latitude])
-                     ->orderBy('distance');
+            ->selectRaw("{$haversine} AS distance", [$latitude, $longitude, $latitude])
+            ->orderBy('distance');
     }
 
     // =========================================================
@@ -178,9 +180,10 @@ class Store extends Model implements HasMedia
         if ($this->relationLoaded('user') && $this->user) {
             return $this->user->getProfilePhotoUrlAttribute();
         }
-        
+
         // إذا لم يكن اليوزر محملاً (Fallback)
         $user = User::find($this->user_id);
+
         return $user ? $user->getProfilePhotoUrlAttribute() : null;
     }
 
@@ -190,17 +193,23 @@ class Store extends Model implements HasMedia
     public function getCoverUrlAttribute(): ?string
     {
         $mediaUrl = $this->getFirstMediaUrl('cover', 'optimized') ?: $this->getFirstMediaUrl('cover');
-        if ($mediaUrl) return $mediaUrl;
+        if ($mediaUrl) {
+            return $mediaUrl;
+        }
 
         $cover = $this->attributes['cover'] ?? null;
-        if (!$cover) return null;
+        if (! $cover) {
+            return null;
+        }
 
-        if (filter_var($cover, FILTER_VALIDATE_URL)) return $cover;
+        if (filter_var($cover, FILTER_VALIDATE_URL)) {
+            return $cover;
+        }
 
         $path = ltrim($cover, '/');
+
         return str_starts_with($path, 'storage/')
             ? url($path)
-            : url('storage/' . $path);
+            : url('storage/'.$path);
     }
 }
-

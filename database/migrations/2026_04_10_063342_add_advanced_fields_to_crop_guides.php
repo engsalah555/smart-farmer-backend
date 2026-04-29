@@ -31,7 +31,7 @@ return new class extends Migration
                 'growing_conditions',
                 'soil_and_ph',
                 'pests_and_diseases',
-                'harvesting_and_storage'
+                'harvesting_and_storage',
             ]);
         });
     }

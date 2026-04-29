@@ -9,9 +9,12 @@ use Illuminate\Support\Facades\DB;
 class ProductCategoriesChart extends ChartWidget
 {
     protected ?string $heading = 'توزيع المنتجات حسب التصنيف';
+
     protected static ?int $sort = 3;
+
     protected ?string $pollingInterval = '30s';
-    protected int | string | array $columnSpan = [
+
+    protected int|string|array $columnSpan = [
         'md' => 1,
         'xl' => 1,
     ];
@@ -39,7 +42,7 @@ class ProductCategoriesChart extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $data->pluck('category')->map(fn($cat) => $cat ?? 'غير مصنف')->toArray(),
+            'labels' => $data->pluck('category')->map(fn ($cat) => $cat ?? 'غير مصنف')->toArray(),
         ];
     }
 

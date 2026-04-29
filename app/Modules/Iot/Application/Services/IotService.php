@@ -2,10 +2,11 @@
 
 namespace App\Modules\Iot\Application\Services;
 
+use App\Jobs\SyncFirebaseSettings;
 use App\Modules\Iot\Domain\Models\IotDevice;
-use App\Modules\Iot\Domain\Models\IrrigationSchedule;
 use App\Modules\Iot\Domain\Models\IrrigationLog;
-use Illuminate\Support\Facades\Http;
+use App\Modules\Iot\Domain\Models\IrrigationSchedule;
+use App\Services\FirebaseService;
 use Illuminate\Support\Facades\Log;
 
 class IotService
@@ -17,22 +18,22 @@ class IotService
     {
         $device = IotDevice::where('user_id', $user->id)->first();
 
-        if (!$device) {
+        if (! $device) {
             return [
                 'has_device' => false,
-                'message' => 'لم يتم العثور على جهاز مرتبط بهذا الحساب. يمكنك طلب تفعيل الخدمة الآن.'
+                'message' => 'لم يتم العثور على جهاز مرتبط بهذا الحساب. يمكنك طلب تفعيل الخدمة الآن.',
             ];
         }
 
         return [
             'has_device' => true,
-            'device' => $device->load(['schedules' => function($q) {
+            'device' => $device->load(['schedules' => function ($q) {
                 $q->where('is_active', true);
             }]),
             'last_logs' => IrrigationLog::where('iot_device_id', $device->id)
                 ->orderBy('created_at', 'desc')
                 ->take(5)
-                ->get()
+                ->get(),
         ];
     }
 
@@ -51,17 +52,17 @@ class IotService
         $device->save();
 
         // ✅ Sync with Firebase RTDB (New)
-        \App\Jobs\SyncFirebaseSettings::dispatch("SmartFarm/Devices/{$device->device_id}/Settings", [
-            'ManualPump' => $status
+        SyncFirebaseSettings::dispatch("SmartFarm/Devices/{$device->device_id}/Settings", [
+            'ManualPump' => $status,
         ]);
 
         // Log the action. water_used = 0 here because actual consumption
         // is computed from the duration after the pump is turned off.
         IrrigationLog::create([
             'iot_device_id' => $device->id,
-            'action'        => $status ? 'manual_on' : 'manual_off',
-            'duration'      => 0,
-            'water_used'    => 0,
+            'action' => $status ? 'manual_on' : 'manual_off',
+            'duration' => 0,
+            'water_used' => 0,
         ]);
 
         return $device;
@@ -82,9 +83,9 @@ class IotService
         $device->save();
 
         // ✅ Sync with Firebase RTDB (New)
-        \App\Jobs\SyncFirebaseSettings::dispatch("SmartFarm/Devices/{$device->device_id}/Settings", [
+        SyncFirebaseSettings::dispatch("SmartFarm/Devices/{$device->device_id}/Settings", [
             'Mode' => $auto ? 'AUTO' : 'MANUAL',
-            'AutoThreshold' => $threshold
+            'AutoThreshold' => $threshold,
         ]);
 
         return $device;
@@ -96,11 +97,13 @@ class IotService
     public function syncFromFirebase($user)
     {
         $device = IotDevice::where('user_id', $user->id)->first();
-        if (!$device) return null;
+        if (! $device) {
+            return null;
+        }
 
-        $firebase = app(\App\Services\FirebaseService::class);
+        $firebase = app(FirebaseService::class);
         $data = $firebase->get("SmartFarm/Devices/{$device->device_id}/Sensors");
- 
+
         if ($data) {
             $device->update([
                 'temperature' => $data['temperature'] ?? $device->temperature,
@@ -110,7 +113,7 @@ class IotService
                 'rain_level' => $data['rain_level'] ?? $device->rain_level,
                 'last_sync_at' => now(),
             ]);
-            
+
             // Also update status if available
             $status = $firebase->get("SmartFarm/Devices/{$device->device_id}/Status");
             if ($status) {
@@ -153,8 +156,7 @@ class IotService
         }
 
         $schedule = IrrigationSchedule::where('iot_device_id', $device->id)->findOrFail($scheduleId);
+
         return $schedule->delete();
     }
-
-
 }

@@ -5,13 +5,11 @@ namespace App\Filament\Resources\Marketplace\Stores\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Table;
-
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\SelectColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class StoresTable
 {
@@ -73,14 +71,14 @@ class StoresTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                \Filament\Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->label('الحالة')
                     ->options([
                         'pending' => 'قيد المراجعة',
                         'verified' => 'موثق',
                         'rejected' => 'مرفوض',
                     ]),
-                \Filament\Tables\Filters\SelectFilter::make('store_type')
+                SelectFilter::make('store_type')
                     ->label('النوع')
                     ->options([
                         'seeds' => 'بذور',

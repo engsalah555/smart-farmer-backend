@@ -30,7 +30,7 @@ class StorePolicy
             return true;
         }
 
-        return $user->user_type === 'seller' && !$user->store()->exists();
+        return $user->user_type === 'seller' && ! $user->store()->exists();
     }
 
     public function update(User $user, Store $store): bool

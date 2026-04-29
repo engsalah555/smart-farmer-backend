@@ -4,8 +4,8 @@ namespace App\Modules\Ai\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponder;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -21,24 +21,25 @@ class PlantDiseaseController extends Controller
 
         try {
             $imageData = file_get_contents($request->file('image')->path());
-            $apiKey    = config('services.huggingface.key');
-            $apiUrl    = 'https://api-inference.huggingface.co/models/prof-freakenstein/plantnet-disease-detection';
+            $apiKey = config('services.huggingface.key');
+            $apiUrl = 'https://api-inference.huggingface.co/models/prof-freakenstein/plantnet-disease-detection';
 
             $response = Http::withHeaders([
                 'Authorization' => "Bearer {$apiKey}",
-                'Content-Type'  => 'application/octet-stream',
+                'Content-Type' => 'application/octet-stream',
             ])
-            ->timeout(30)
-            ->send('POST', $apiUrl, ['body' => $imageData]);
+                ->timeout(30)
+                ->send('POST', $apiUrl, ['body' => $imageData]);
 
             if ($response->successful()) {
                 $predictions = $response->json();
 
-                if (!empty($predictions) && isset($predictions[0])) {
+                if (! empty($predictions) && isset($predictions[0])) {
                     $topPrediction = $predictions[0];
+
                     return $this->success([
-                        'disease'         => $topPrediction['label'],
-                        'confidence'      => $topPrediction['score'],
+                        'disease' => $topPrediction['label'],
+                        'confidence' => $topPrediction['score'],
                         'all_predictions' => array_slice($predictions, 0, 3),
                     ]);
                 }
@@ -49,13 +50,14 @@ class PlantDiseaseController extends Controller
             // ✅ نسجِّل الخطأ الداخلي ولا نُظهره للمستخدم
             Log::error('Hugging Face API Error', [
                 'status' => $response->status(),
-                'body'   => $response->body(),
+                'body' => $response->body(),
             ]);
 
             return $this->error('خدمة التحليل غير متاحة حالياً، يرجى المحاولة لاحقاً', 503);
 
         } catch (\Exception $e) {
             Log::error('Plant Disease Detection Error', ['error' => $e->getMessage()]);
+
             return $this->error('حدث خطأ أثناء معالجة الصورة', 500);
         }
     }

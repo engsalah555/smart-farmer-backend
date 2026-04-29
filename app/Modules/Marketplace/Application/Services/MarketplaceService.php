@@ -2,21 +2,22 @@
 
 namespace App\Modules\Marketplace\Application\Services;
 
-use App\Modules\Marketplace\Domain\Models\Product;
-use App\Modules\Marketplace\Domain\Models\Store;
+use App\Modules\Marketplace\Domain\Exceptions\BusinessLogicException;
+use App\Modules\Marketplace\Domain\Exceptions\ResourceNotFoundException;
+use App\Modules\Marketplace\Domain\Exceptions\UnauthorizedAccessException;
 use App\Modules\Marketplace\Domain\Models\Order;
 use App\Modules\Marketplace\Domain\Models\OrderItem;
-use App\Modules\Marketplace\Domain\Models\ProductReview;
+use App\Modules\Marketplace\Domain\Models\Product;
+use App\Modules\Marketplace\Domain\Models\Store;
 use App\Modules\Marketplace\Domain\Models\StoreCatalog;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Arr;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Modules\Marketplace\Domain\Exceptions\ResourceNotFoundException;
-use App\Modules\Marketplace\Domain\Exceptions\BusinessLogicException;
-use App\Modules\Marketplace\Domain\Exceptions\UnauthorizedAccessException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class MarketplaceService
 {
@@ -43,9 +44,9 @@ class MarketplaceService
         }
 
         return Product::with(['store:id,store_name,slug', 'catalog:id,name,slug', 'media'])
-            ->when($onlyFeatured, fn($q) => $q->featured())
-            ->when($query, function($q) use ($query) {
-                $q->where(function($sub) use ($query) {
+            ->when($onlyFeatured, fn ($q) => $q->featured())
+            ->when($query, function ($q) use ($query) {
+                $q->where(function ($sub) use ($query) {
                     $sub->where('name', 'like', "%{$query}%")
                         ->orWhere('description', 'like', "%{$query}%");
                 });
@@ -64,7 +65,7 @@ class MarketplaceService
         // Global scope Handles isolation if called from Seller context.
         // Explicit $store->products() is safer for public/admin use.
         return $store->products()
-            ->when($catalogId !== null, fn($q) => $q->forCatalog($catalogId))
+            ->when($catalogId !== null, fn ($q) => $q->forCatalog($catalogId))
             ->with(['catalog:id,name,slug', 'media'])
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
@@ -141,9 +142,9 @@ class MarketplaceService
     {
         return $user->store()
             ->with([
-                'catalogs' => fn($q) => $q->withCount('products')->ordered()->with(['media']),
-                'products' => fn($q) => $q->with('media')->latest(),
-                'media'
+                'catalogs' => fn ($q) => $q->withCount('products')->ordered()->with(['media']),
+                'products' => fn ($q) => $q->with('media')->latest(),
+                'media',
             ])
             ->withCount(['products', 'catalogs'])
             ->first();
@@ -172,16 +173,16 @@ class MarketplaceService
         $store = Store::where('slug', $slug)
             ->orWhere('id', $slug)
             ->with([
-                'catalogs' => fn($q) => $q->withCount('products')->ordered()->with(['media']),
+                'catalogs' => fn ($q) => $q->withCount('products')->ordered()->with(['media']),
                 // ✅ تمت إزالة products من هنا لأننا نجلبها بـ pagination منفصل
-                'media'
+                'media',
             ])
             ->withCount(['products', 'catalogs'])
             ->withAvg('reviews as reviews_avg_rating', 'rating')
             ->first();
 
-        if (!$store) {
-            throw new ResourceNotFoundException("المتجر");
+        if (! $store) {
+            throw new ResourceNotFoundException('المتجر');
         }
 
         return $store;
@@ -192,18 +193,18 @@ class MarketplaceService
      */
     public function getAllStores(int $perPage = 20, ?string $query = null, ?float $latitude = null, ?float $longitude = null): LengthAwarePaginator
     {
-        return Store::with(['catalogs' => fn($q) => $q->ordered(), 'media'])
-            ->when($query, function($q) use ($query) {
-                $q->where(function($sub) use ($query) {
+        return Store::with(['catalogs' => fn ($q) => $q->ordered(), 'media'])
+            ->when($query, function ($q) use ($query) {
+                $q->where(function ($sub) use ($query) {
                     $sub->where('store_name', 'like', "%{$query}%")
                         ->orWhere('description', 'like', "%{$query}%")
                         ->orWhere('address', 'like', "%{$query}%");
                 });
             })
-            ->when($latitude !== null && $longitude !== null, function($q) use ($latitude, $longitude) {
+            ->when($latitude !== null && $longitude !== null, function ($q) use ($latitude, $longitude) {
                 $q->nearestTo($latitude, $longitude);
             })
-            ->when($latitude === null || $longitude === null, function($q) {
+            ->when($latitude === null || $longitude === null, function ($q) {
                 $q->latest();
             })
             ->withCount('products')
@@ -222,6 +223,7 @@ class MarketplaceService
         }
 
         $store->update($data);
+
         return $store->fresh(['media']);
     }
 
@@ -232,7 +234,7 @@ class MarketplaceService
     /**
      * جلب كتالوجات متجر البائع مع عدد المنتجات.
      */
-    public function getSellerCatalogs(Store $store): \Illuminate\Database\Eloquent\Collection
+    public function getSellerCatalogs(Store $store): Collection
     {
         return $store->catalogs()
             ->with(['media'])
@@ -291,9 +293,9 @@ class MarketplaceService
         // to the current store if called from a seller management route.
         // We still verify count to ensure all requested products were found/accessible.
         $ownedCount = Product::whereIn('id', $productIds)->count();
-            
+
         if ($ownedCount !== count(array_unique($productIds))) {
-            throw new BusinessLogicException("بعض المنتجات المحددة لا تنتمي لمتجرك أو غير موجودة.");
+            throw new BusinessLogicException('بعض المنتجات المحددة لا تنتمي لمتجرك أو غير موجودة.');
         }
 
         DB::transaction(function () use ($catalog, $productIds) {
@@ -303,7 +305,7 @@ class MarketplaceService
                 ->update(['catalog_id' => null]);
 
             // 2. تحديث المنتجات الجديدة المحددة
-            if (!empty($productIds)) {
+            if (! empty($productIds)) {
                 Product::whereIn('id', $productIds)
                     ->where('store_id', $catalog->store_id)
                     ->update(['catalog_id' => $catalog->id]);
@@ -320,7 +322,7 @@ class MarketplaceService
      */
     public function placeOrder($user, array $data, ?UploadedFile $receiptImage = null): Order
     {
-        \Illuminate\Support\Facades\Log::info('Placing split order', ['user_id' => $user->id]);
+        Log::info('Placing split order', ['user_id' => $user->id]);
 
         return DB::transaction(function () use ($user, $data, $receiptImage) {
             $receiptUrl = null;
@@ -336,48 +338,48 @@ class MarketplaceService
             $itemsByStore = [];
             foreach ($data['items'] as $item) {
                 $product = $products->get($item['product_id']);
-                if (!$product) {
-                    throw new ResourceNotFoundException('المنتج ' . $item['product_id']);
+                if (! $product) {
+                    throw new ResourceNotFoundException('المنتج '.$item['product_id']);
                 }
                 $itemsByStore[$product->store_id][] = [
-                    'item'    => $item,
-                    'product' => $product
+                    'item' => $item,
+                    'product' => $product,
                 ];
             }
 
             $createdOrders = [];
             foreach ($itemsByStore as $storeId => $group) {
                 // حساب إجمالي هذا المتجر فقط
-                $storeTotal = collect($group)->sum(fn($g) => $g['product']->price * $g['item']['quantity']);
+                $storeTotal = collect($group)->sum(fn ($g) => $g['product']->price * $g['item']['quantity']);
 
                 $order = Order::create([
-                    'user_id'          => $user->id,
-                    'store_id'         => $storeId,
-                    'total_price'      => $storeTotal,
-                    'status'           => 'pending',
+                    'user_id' => $user->id,
+                    'store_id' => $storeId,
+                    'total_price' => $storeTotal,
+                    'status' => 'pending',
                     'shipping_address' => $data['shipping_address'] ?? 'غير محدد',
-                    'notes'            => $data['notes'] ?? null,
-                    'payment_method'   => $data['payment_method'],
-                    'payment_status'   => in_array($data['payment_method'], ['cash', 'bank_transfer']) ? 'pending' : 'completed',
-                    'receipt_image'    => $receiptUrl,
+                    'notes' => $data['notes'] ?? null,
+                    'payment_method' => $data['payment_method'],
+                    'payment_status' => in_array($data['payment_method'], ['cash', 'bank_transfer']) ? 'pending' : 'completed',
+                    'receipt_image' => $receiptUrl,
                 ]);
 
                 $orderItems = [];
                 foreach ($group as $g) {
-                    $item    = $g['item'];
+                    $item = $g['item'];
                     $product = $g['product'];
 
                     if ($product->stock_quantity < $item['quantity']) {
-                        throw new BusinessLogicException('الكمية المطلوبة من "' . $product->name . '" غير متوفرة');
+                        throw new BusinessLogicException('الكمية المطلوبة من "'.$product->name.'" غير متوفرة');
                     }
 
                     $orderItems[] = [
-                        'order_id'          => $order->id,
-                        'product_id'        => $item['product_id'],
-                        'quantity'          => $item['quantity'],
+                        'order_id' => $order->id,
+                        'product_id' => $item['product_id'],
+                        'quantity' => $item['quantity'],
                         'price_at_purchase' => $product->price,
-                        'created_at'        => now(),
-                        'updated_at'        => now(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ];
 
                     $product->decrement('stock_quantity', $item['quantity']);
@@ -394,11 +396,11 @@ class MarketplaceService
 
             // نرجع أول طلب للمحافظة على توافق الـ API حالياً
             // المستخدم سيجد كل الطلبات في قائمة "طلباتي"
-            \Illuminate\Support\Facades\Log::info('Orders placed successfully', ['count' => count($createdOrders)]);
-            
+            Log::info('Orders placed successfully', ['count' => count($createdOrders)]);
+
             // إضافة معلومات الطلبات المجمعة (للموبايل)
             $mainOrder = $createdOrders[0];
-            $mainOrder->related_order_ids = array_map(fn($o) => $o->id, $createdOrders);
+            $mainOrder->related_order_ids = array_map(fn ($o) => $o->id, $createdOrders);
 
             return $mainOrder->load('items.product:id,name');
         });
@@ -425,11 +427,11 @@ class MarketplaceService
     {
         // التحقق من الصلاحية: صاحب الطلب أو صاحب المتجر
         if ($order->user_id !== $userId && $order->store->user_id !== $userId) {
-            throw new UnauthorizedAccessException("ليس لديك صلاحية لإلغاء هذا الطلب.");
+            throw new UnauthorizedAccessException('ليس لديك صلاحية لإلغاء هذا الطلب.');
         }
 
         // لا يمكن الإلغاء إلا إذا كان الطلب قيد الانتظار أو المعالجة
-        if (!in_array($order->status, ['pending', 'processing'])) {
+        if (! in_array($order->status, ['pending', 'processing'])) {
             throw new BusinessLogicException("لا يمكن إلغاء الطلب في حالته الحالية ({$order->status}).");
         }
 
@@ -453,7 +455,7 @@ class MarketplaceService
                     $item->product->increment('stock_quantity', $item->quantity);
                 }
             }
-            
+
             // Clear cache if featured products are involved
             if ($order->items->pluck('product')->where('is_featured', true)->isNotEmpty()) {
                 Cache::forget('marketplace_featured_products');
@@ -470,7 +472,7 @@ class MarketplaceService
      */
     private function deleteFileFromStorage(?string $url): void
     {
-        if (!$url) {
+        if (! $url) {
             return;
         }
 

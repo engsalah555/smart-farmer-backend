@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\DB;
 class IrrigationChart extends ChartWidget
 {
     protected ?string $heading = 'استهلاك المياه (آخر 7 أيام)';
+
     protected static ?int $sort = 4;
-    protected int | string | array $columnSpan = [
+
+    protected int|string|array $columnSpan = [
         'md' => 2,
         'xl' => 2,
     ];

@@ -2,9 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\Crop;
-use Illuminate\Http\Request;
+use App\Models\User;
 
 class FarmService
 {
@@ -34,6 +33,7 @@ class FarmService
     public function deleteFromFarm($user, $id)
     {
         $crop = $user->crops()->findOrFail($id);
+
         return $crop->delete();
     }
 }

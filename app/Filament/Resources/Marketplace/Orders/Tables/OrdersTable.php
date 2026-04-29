@@ -5,10 +5,9 @@ namespace App\Filament\Resources\Marketplace\Orders\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Table;
-
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class OrdersTable
 {
@@ -40,22 +39,22 @@ class OrdersTable
                     ->label('حالة الطلب')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pending'    => 'قيد الانتظار',
-                        'confirmed'  => 'تم التأكيد',
+                        'pending' => 'قيد الانتظار',
+                        'confirmed' => 'تم التأكيد',
                         'processing' => 'قيد التجهيز',
-                        'shipped'    => 'تم الشحن',
-                        'delivered'  => 'تم التوصيل',
-                        'cancelled'  => 'ملغي',
-                        default      => $state,
+                        'shipped' => 'تم الشحن',
+                        'delivered' => 'تم التوصيل',
+                        'cancelled' => 'ملغي',
+                        default => $state,
                     })
                     ->color(fn (string $state): string => match ($state) {
-                        'pending'    => 'warning',
-                        'confirmed'  => 'info',
+                        'pending' => 'warning',
+                        'confirmed' => 'info',
                         'processing' => 'primary',
-                        'shipped'    => 'info',
-                        'delivered'  => 'success',
-                        'cancelled'  => 'danger',
-                        default      => 'gray',
+                        'shipped' => 'info',
+                        'delivered' => 'success',
+                        'cancelled' => 'danger',
+                        default => 'gray',
                     }),
 
                 TextColumn::make('payment_status')
@@ -80,17 +79,17 @@ class OrdersTable
                     ->sortable(),
             ])
             ->filters([
-                \Filament\Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->label('حالة الطلب')
                     ->options([
-                        'pending'    => 'قيد الانتظار',
-                        'confirmed'  => 'تم التأكيد',
+                        'pending' => 'قيد الانتظار',
+                        'confirmed' => 'تم التأكيد',
                         'processing' => 'قيد التجهيز',
-                        'shipped'    => 'تم الشحن',
-                        'delivered'  => 'تم التوصيل',
-                        'cancelled'  => 'ملغي',
+                        'shipped' => 'تم الشحن',
+                        'delivered' => 'تم التوصيل',
+                        'cancelled' => 'ملغي',
                     ]),
-                \Filament\Tables\Filters\SelectFilter::make('payment_status')
+                SelectFilter::make('payment_status')
                     ->label('حالة الدفع')
                     ->options([
                         'pending' => 'قيد الانتظار',

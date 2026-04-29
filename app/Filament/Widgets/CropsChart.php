@@ -9,9 +9,12 @@ use Illuminate\Support\Facades\DB;
 class CropsChart extends ChartWidget
 {
     protected ?string $heading = 'توزيع المحاصيل حسب النوع';
+
     protected static ?int $sort = 5;
+
     protected ?string $pollingInterval = '30s';
-    protected int | string | array $columnSpan = [
+
+    protected int|string|array $columnSpan = [
         'md' => 1,
         'xl' => 1,
     ];
@@ -49,7 +52,7 @@ class CropsChart extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $data->pluck('crop_type')->map(fn($type) => $type ?? 'غير محدد')->toArray(),
+            'labels' => $data->pluck('crop_type')->map(fn ($type) => $type ?? 'غير محدد')->toArray(),
         ];
     }
 

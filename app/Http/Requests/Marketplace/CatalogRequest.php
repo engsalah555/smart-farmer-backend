@@ -23,22 +23,22 @@ class CatalogRequest extends FormRequest
         $isUpdate = $this->isMethod('PUT') || $this->isMethod('PATCH');
 
         return [
-            'name'        => $isUpdate
+            'name' => $isUpdate
                 ? 'sometimes|required|string|max:100'
                 : 'required|string|max:100',
             'description' => 'nullable|string|max:500',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'sort_order'  => 'nullable|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'sort_order' => 'nullable|integer|min:0',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required'    => 'اسم الكتالوج مطلوب',
-            'name.max'         => 'اسم الكتالوج يجب ألا يتجاوز 100 حرف',
-            'image.image'      => 'يجب أن يكون الملف صورة',
-            'image.max'        => 'حجم الصورة لا يتجاوز 2 ميجابايت',
+            'name.required' => 'اسم الكتالوج مطلوب',
+            'name.max' => 'اسم الكتالوج يجب ألا يتجاوز 100 حرف',
+            'image.image' => 'يجب أن يكون الملف صورة',
+            'image.max' => 'حجم الصورة لا يتجاوز 2 ميجابايت',
             'sort_order.integer' => 'الترتيب يجب أن يكون رقماً صحيحاً',
         ];
     }

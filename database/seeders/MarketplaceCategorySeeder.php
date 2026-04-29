@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Category;
 use Illuminate\Database\Seeder;
 
 class MarketplaceCategorySeeder extends Seeder
@@ -22,7 +22,7 @@ class MarketplaceCategorySeeder extends Seeder
         ];
 
         foreach ($categories as $cat) {
-            \App\Models\Category::updateOrCreate(
+            Category::updateOrCreate(
                 ['name' => $cat['name'], 'type' => 'marketplace'],
                 $cat
             );

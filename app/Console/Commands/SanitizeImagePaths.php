@@ -2,7 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Product;
+use App\Models\Store;
+use App\Models\StoreCatalog;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
 
 class SanitizeImagePaths extends Command
 {
@@ -28,8 +32,8 @@ class SanitizeImagePaths extends Command
         $this->info('Starting image path sanitation...');
 
         // 1. Sanitize Store logos and cover images
-        \App\Models\Store::all()->each(function ($store) {
-            if (\Illuminate\Support\Facades\Schema::hasColumn('stores', 'logo') || \Illuminate\Support\Facades\Schema::hasColumn('stores', 'cover_image')) {
+        Store::all()->each(function ($store) {
+            if (Schema::hasColumn('stores', 'logo') || Schema::hasColumn('stores', 'cover_image')) {
                 $oldLogo = $store->logo;
                 $oldCover = $store->cover_image;
 
@@ -44,8 +48,8 @@ class SanitizeImagePaths extends Command
         });
 
         // 2. Sanitize Product image_url
-        \App\Models\Product::all()->each(function ($product) {
-            if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'image_url')) {
+        Product::all()->each(function ($product) {
+            if (Schema::hasColumn('products', 'image_url')) {
                 $oldImage = $product->image_url;
                 $product->image_url = $this->sanitize($product->image_url);
 
@@ -57,8 +61,8 @@ class SanitizeImagePaths extends Command
         });
 
         // 3. Sanitize StoreCatalog image_url
-        \App\Models\StoreCatalog::all()->each(function ($catalog) {
-            if (\Illuminate\Support\Facades\Schema::hasColumn('store_catalogs', 'image_url')) {
+        StoreCatalog::all()->each(function ($catalog) {
+            if (Schema::hasColumn('store_catalogs', 'image_url')) {
                 $oldImage = $catalog->image_url;
                 $catalog->image_url = $this->sanitize($catalog->image_url);
 
@@ -74,7 +78,9 @@ class SanitizeImagePaths extends Command
 
     private function sanitize($path)
     {
-        if (empty($path)) return $path;
+        if (empty($path)) {
+            return $path;
+        }
 
         // Pattern 1: Remove full URL up to /storage/
         // Matches http://192.168.0.27:8000/storage/products/abc.jpg -> products/abc.jpg

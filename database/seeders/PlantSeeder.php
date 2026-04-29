@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\CareGuide;
 use App\Models\Category;
 use App\Models\Plant;
-use App\Models\CareGuide;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PlantSeeder extends Seeder
@@ -16,13 +16,13 @@ class PlantSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         CareGuide::truncate();
         Plant::truncate();
-        
+
         $json = file_get_contents(database_path('seeders/yemeni_plants.json'));
         $data = json_decode($json, true);
         $cropCategoryNames = collect($data['categories'])->pluck('name')->toArray();
 
         Category::whereIn('name', $cropCategoryNames)->delete();
-        
+
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $categoryMap = [];
@@ -31,7 +31,7 @@ class PlantSeeder extends Seeder
                 'name' => $catData['name'],
                 'type' => 'crop',
                 'description' => $catData['description'],
-                'icon' => $this->getCategoryIcon($catData['name'])
+                'icon' => $this->getCategoryIcon($catData['name']),
             ]);
         }
 
@@ -41,7 +41,7 @@ class PlantSeeder extends Seeder
             // Extract numeric values using regex
             $tempRange = $this->extractRange($p['growing_conditions'] ?? '');
             $phRange = $this->extractRange($p['soil_and_ph'] ?? '');
-            
+
             $plant = Plant::create([
                 'category_id' => $categoryId,
                 'scientific_name' => $p['scientific_name'] ?? 'N/A',
@@ -60,7 +60,7 @@ class PlantSeeder extends Seeder
                 'sunlight_requirement' => $p['sunlight_requirement'] ?? '',
                 'temperature' => $p['temperature'] ?? '',
                 'humidity' => $p['humidity'] ?? '',
-                
+
                 // Scientific Fields
                 'min_temp' => $tempRange['min'] ?? null,
                 'max_temp' => $tempRange['max'] ?? null,
@@ -69,24 +69,24 @@ class PlantSeeder extends Seeder
                 'min_humidity' => 40, // Default
                 'max_humidity' => 70, // Default
                 'irrigation_level' => $p['water_needs'] ?? 'متوسط',
-                
+
                 'life_cycle' => $this->guessLifeCycle($p['harvest_time'] ?? ''),
                 'cultivation_method' => 'بذر مباشر',
                 'planting_depth' => '2-5 سم',
-                
+
                 'soil_texture' => Str::before($p['soil_and_ph'] ?? '', '.'),
                 'min_ph' => $phRange['min'] ?? 6.0,
                 'max_ph' => $phRange['max'] ?? 7.5,
-                
+
                 'seed_rate' => '10-15 كجم/هكتار',
                 'n_amount' => 80.0,
                 'p_amount' => 40.0,
                 'k_amount' => 40.0,
-                
+
                 'companion_plants' => 'البقوليات، الأعشاب العطرية',
                 'combative_plants' => 'الأعشاب الضارة، المحاصيل المنافسة',
                 'management_tips' => $p['pests_and_diseases'] ?? 'المراقبة الدورية للآفات',
-                
+
                 'succeeding_crops' => 'البقوليات (لتحسين النيتروجين)',
                 'forbidden_crops' => 'نفس العائلة النباتية',
                 'rotation_recommendation' => 'دورة ثلاثية (حبوب - بقوليات - خضروات)',
@@ -100,19 +100,20 @@ class PlantSeeder extends Seeder
         if (isset($matches[0]) && count($matches[0]) >= 2) {
             return [
                 'min' => (float) $matches[0][0],
-                'max' => (float) $matches[0][1]
+                'max' => (float) $matches[0][1],
             ];
         }
+
         return ['min' => null, 'max' => null];
     }
 
     private function generateGrowthGuide($p)
     {
-        return "التعريف العلمي: " . ($p['scientific_definition'] ?? '-') . "\n\n" .
-               "ظروف النمو: " . ($p['growing_conditions'] ?? '-') . "\n\n" .
-               "التربة والحموضة: " . ($p['soil_and_ph'] ?? '-') . "\n\n" .
-               "الآفات والأمراض: " . ($p['pests_and_diseases'] ?? '-') . "\n\n" .
-               "الحصاد والتخزين: " . ($p['harvesting_and_storage'] ?? '-');
+        return 'التعريف العلمي: '.($p['scientific_definition'] ?? '-')."\n\n".
+               'ظروف النمو: '.($p['growing_conditions'] ?? '-')."\n\n".
+               'التربة والحموضة: '.($p['soil_and_ph'] ?? '-')."\n\n".
+               'الآفات والأمراض: '.($p['pests_and_diseases'] ?? '-')."\n\n".
+               'الحصاد والتخزين: '.($p['harvesting_and_storage'] ?? '-');
     }
 
     private function guessLifeCycle($harvestTime)
@@ -120,6 +121,7 @@ class PlantSeeder extends Seeder
         if (Str::contains($harvestTime, ['أيام', 'شهر'])) {
             return 'قصيرة';
         }
+
         return 'متوسطة';
     }
 
@@ -132,6 +134,7 @@ class PlantSeeder extends Seeder
             'محاصيل نقدية' => 'banknote',
             'أعشاب ونباتات طبية' => 'leaf',
         ];
+
         return $icons[$name] ?? 'sprout';
     }
 }

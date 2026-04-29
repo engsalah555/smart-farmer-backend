@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\CareGuide;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\CareGuide
+ * @mixin CareGuide
  */
 class CareGuideResource extends JsonResource
 {

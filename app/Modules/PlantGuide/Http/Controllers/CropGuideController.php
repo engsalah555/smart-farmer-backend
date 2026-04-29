@@ -3,9 +3,9 @@
 namespace App\Modules\PlantGuide\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Modules\PlantGuide\Domain\Models\CropGuide;
 use App\Services\CropGuideService;
+use Illuminate\Http\Request;
 
 class CropGuideController extends Controller
 {
@@ -26,14 +26,14 @@ class CropGuideController extends Controller
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('scientific_name', 'LIKE', "%{$search}%");
+                ->orWhere('scientific_name', 'LIKE', "%{$search}%");
         }
 
         $guides = $query->latest()->take(20)->get();
 
         return response()->json([
             'success' => true,
-            'data' => $guides
+            'data' => $guides,
         ]);
     }
 
@@ -43,20 +43,20 @@ class CropGuideController extends Controller
     public function search(Request $request)
     {
         $request->validate(['query' => 'required|string|min:2']);
-        
+
         $result = $this->cropGuideService->searchGuide(trim($request->input('query')));
 
         if ($result) {
             return response()->json([
                 'success' => true,
                 'data' => [$result['guide']],
-                'source' => $result['source']
+                'source' => $result['source'],
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'لم نتمكن من العثور على معلومات حول هذا النبات حالياً.'
+            'message' => 'لم نتمكن من العثور على معلومات حول هذا النبات حالياً.',
         ], 404);
     }
 }

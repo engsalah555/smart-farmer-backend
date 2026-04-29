@@ -1,37 +1,37 @@
 <?php
- 
+
 namespace App\Services;
- 
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\Contract\Database;
+
 use Illuminate\Support\Facades\Log;
- 
+use Kreait\Firebase\Contract\Database;
+use Kreait\Firebase\Factory;
+
 class FirebaseService
 {
     protected Database $database;
- 
+
     public function __construct()
     {
         $credentialsPath = config('services.firebase.credentials_path');
         $databaseUrl = config('services.firebase.database_url');
- 
+
         // Ensure the path is absolute
-        if (!str_starts_with($credentialsPath, '/') && !str_contains($credentialsPath, ':')) {
+        if (! str_starts_with($credentialsPath, '/') && ! str_contains($credentialsPath, ':')) {
             $credentialsPath = base_path($credentialsPath);
         }
- 
+
         try {
             $factory = (new Factory)
                 ->withServiceAccount($credentialsPath)
-                ->withDatabaseUri('https://' . rtrim(str_replace('https://', '', $databaseUrl), '/'));
- 
+                ->withDatabaseUri('https://'.rtrim(str_replace('https://', '', $databaseUrl), '/'));
+
             $this->database = $factory->createDatabase();
         } catch (\Exception $e) {
-            Log::error("Firebase Initialization Error: " . $e->getMessage());
+            Log::error('Firebase Initialization Error: '.$e->getMessage());
             throw $e;
         }
     }
- 
+
     /**
      * Update data in Realtime Database.
      */
@@ -39,13 +39,14 @@ class FirebaseService
     {
         try {
             $this->database->getReference($path)->update($data);
+
             return true;
         } catch (\Exception $e) {
-            Log::error("Firebase RTDB Update Error [{$path}]: " . $e->getMessage());
+            Log::error("Firebase RTDB Update Error [{$path}]: ".$e->getMessage());
             throw $e; // Throw for debugging
         }
     }
- 
+
     /**
      * Get data from Realtime Database.
      */
@@ -54,11 +55,11 @@ class FirebaseService
         try {
             return $this->database->getReference($path)->getValue();
         } catch (\Exception $e) {
-            Log::error("Firebase RTDB Get Error [{$path}]: " . $e->getMessage());
+            Log::error("Firebase RTDB Get Error [{$path}]: ".$e->getMessage());
             throw $e; // Throw for debugging
         }
     }
- 
+
     /**
      * Set data (overwrite) in Realtime Database.
      */
@@ -66,9 +67,10 @@ class FirebaseService
     {
         try {
             $this->database->getReference($path)->set($data);
+
             return true;
         } catch (\Exception $e) {
-            Log::error("Firebase RTDB Set Error [{$path}]: " . $e->getMessage());
+            Log::error("Firebase RTDB Set Error [{$path}]: ".$e->getMessage());
             throw $e; // Throw for debugging
         }
     }

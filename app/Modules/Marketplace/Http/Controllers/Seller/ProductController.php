@@ -5,17 +5,16 @@ namespace App\Modules\Marketplace\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Marketplace\ProductRequest;
 use App\Http\Resources\ProductResource;
-use App\Modules\Marketplace\Domain\Models\Product;
 use App\Modules\Marketplace\Application\Services\MarketplaceService;
-use App\Modules\Marketplace\Domain\Exceptions\UnauthorizedAccessException;
 use App\Modules\Marketplace\Domain\Exceptions\BusinessLogicException;
+use App\Modules\Marketplace\Domain\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     public function __construct(protected MarketplaceService $marketplaceService) {}
-    
+
     /**
      * GET /marketplace/seller/products
      */
@@ -39,7 +38,7 @@ class ProductController extends Controller
 
         // التحقق أن catalog_id ينتمي لنفس المتجر (هذا التحقق منطقي للبقاء هنا)
         if ($request->filled('catalog_id')) {
-            if (!$store->catalogs()->where('id', $request->catalog_id)->exists()) {
+            if (! $store->catalogs()->where('id', $request->catalog_id)->exists()) {
                 return $this->error('الكتالوج المحدد لا ينتمي لمتجرك', 422);
             }
         }
@@ -63,7 +62,7 @@ class ProductController extends Controller
 
         // التحقق من الكتالوج فقط، أما ملكية المنتج فيفحصها الـ Middleware
         if ($request->filled('catalog_id')) {
-            if (!$store->catalogs()->where('id', $request->catalog_id)->exists()) {
+            if (! $store->catalogs()->where('id', $request->catalog_id)->exists()) {
                 throw new BusinessLogicException('الكتالوج المحدد لا ينتمي لمتجرك');
             }
         }

@@ -1,9 +1,15 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\CommunityServiceProvider;
+use App\Providers\FarmServiceProvider;
+use App\Providers\Filament\AdminPanelProvider;
+use App\Providers\ModuleServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\CommunityServiceProvider::class,
-    App\Providers\FarmServiceProvider::class,
-    App\Providers\Filament\AdminPanelProvider::class,
-    App\Providers\ModuleServiceProvider::class,
+    AppServiceProvider::class,
+    CommunityServiceProvider::class,
+    FarmServiceProvider::class,
+    AdminPanelProvider::class,
+    ModuleServiceProvider::class,
 ];

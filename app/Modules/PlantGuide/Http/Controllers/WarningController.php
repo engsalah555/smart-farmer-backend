@@ -3,8 +3,8 @@
 namespace App\Modules\PlantGuide\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Traits\ApiResponder;
 use App\Modules\PlantGuide\Domain\Models\Warning;
+use App\Traits\ApiResponder;
 use Illuminate\Http\JsonResponse;
 
 class WarningController extends Controller
@@ -21,7 +21,7 @@ class WarningController extends Controller
         $warnings = Warning::where('active', true)
             ->where(function ($query) {
                 $query->whereNull('expires_at')
-                      ->orWhere('expires_at', '>', now());
+                    ->orWhere('expires_at', '>', now());
             })
             ->orderBy('created_at', 'desc')
             ->get();

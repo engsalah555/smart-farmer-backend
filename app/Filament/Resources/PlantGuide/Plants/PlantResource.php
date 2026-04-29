@@ -8,10 +8,8 @@ use App\Filament\Resources\PlantGuide\Plants\Pages\ListPlants;
 use App\Filament\Resources\PlantGuide\Plants\Schemas\PlantForm;
 use App\Filament\Resources\PlantGuide\Plants\Tables\PlantsTable;
 use App\Modules\PlantGuide\Domain\Models\Plant;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class PlantResource extends Resource

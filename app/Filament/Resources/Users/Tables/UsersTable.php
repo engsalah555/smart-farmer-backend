@@ -22,7 +22,7 @@ class UsersTable
                 ImageColumn::make('profile_image')
                     ->label('الصورة')
                     ->circular()
-                    ->defaultImageUrl(fn ($record) => "https://ui-avatars.com/api/?name=" . urlencode($record->name) . "&color=7F9CF5&background=EBF4FF"),
+                    ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->name).'&color=7F9CF5&background=EBF4FF'),
 
                 TextColumn::make('name')
                     ->label('الاسم')

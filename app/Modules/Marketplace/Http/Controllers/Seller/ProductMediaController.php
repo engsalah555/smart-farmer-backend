@@ -19,7 +19,7 @@ class ProductMediaController extends Controller
         // Find the media item
         $media = Media::find($mediaId);
 
-        if (!$media) {
+        if (! $media) {
             return $this->error('الصورة غير موجودة', 404);
         }
 

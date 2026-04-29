@@ -3,14 +3,16 @@
 namespace App\Modules\Marketplace\Domain\Models;
 
 use App\Models\User;
-
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use App\Traits\HasStoreScope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
     use HasStoreScope;
+
     protected $fillable = [
         'user_id',
         'store_id',
@@ -29,17 +31,17 @@ class Order extends Model
     // RELATIONSHIPS
     // =========================================================
 
-    public function store(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function items(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
@@ -64,13 +66,13 @@ class Order extends Model
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'pending'    => 'قيد الانتظار',
-            'confirmed'  => 'تم التأكيد',   // added: matches Flutter OrderStatus
+            'pending' => 'قيد الانتظار',
+            'confirmed' => 'تم التأكيد',   // added: matches Flutter OrderStatus
             'processing' => 'قيد التجهيز',
-            'shipped'    => 'تم الشحن',
-            'delivered'  => 'تم التوصيل',
-            'cancelled'  => 'ملغي',
-            default      => $this->status,
+            'shipped' => 'تم الشحن',
+            'delivered' => 'تم التوصيل',
+            'cancelled' => 'ملغي',
+            default => $this->status,
         };
     }
 }

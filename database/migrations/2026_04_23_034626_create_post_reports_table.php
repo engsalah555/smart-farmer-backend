@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('details')->nullable();
             $table->enum('status', ['pending', 'reviewed', 'action_taken'])->default('pending');
             $table->timestamps();
-            
+
             // Prevent multiple reports from same user for same post
             $table->unique(['user_id', 'post_id']);
         });

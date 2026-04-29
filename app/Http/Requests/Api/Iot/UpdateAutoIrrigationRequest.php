@@ -15,7 +15,7 @@ class UpdateAutoIrrigationRequest extends FormRequest
     {
         return [
             'auto_irrigation' => 'required|boolean',
-            'auto_threshold' => 'sometimes|integer|min:0|max:100'
+            'auto_threshold' => 'sometimes|integer|min:0|max:100',
         ];
     }
 }

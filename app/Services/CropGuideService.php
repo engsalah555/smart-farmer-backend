@@ -15,13 +15,13 @@ class CropGuideService
     {
         // 1. Check local DB
         $existing = CropGuide::where('name', 'LIKE', "%{$query}%")
-                              ->orWhere('scientific_name', 'LIKE', "%{$query}%")
-                              ->first();
+            ->orWhere('scientific_name', 'LIKE', "%{$query}%")
+            ->first();
 
         if ($existing) {
             return [
                 'guide' => $existing,
-                'source' => 'database'
+                'source' => 'database',
             ];
         }
 
@@ -40,12 +40,12 @@ class CropGuideService
                 'water_needs' => $plantData['water_needs'] ?? null,
                 'fertilizer_needs' => $plantData['fertilizer_needs'] ?? null,
                 'harvest_time' => $plantData['harvest_time'] ?? null,
-                'image_url' => $imageUrl
+                'image_url' => $imageUrl,
             ]);
 
             return [
                 'guide' => $newGuide,
-                'source' => 'gemini_api'
+                'source' => 'gemini_api',
             ];
         }
 
@@ -56,13 +56,14 @@ class CropGuideService
     {
         $imageUrl = 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80';
         try {
-            $wikiResponse = Http::timeout(10)->get("https://ar.wikipedia.org/api/rest_v1/page/summary/" . urlencode($query));
+            $wikiResponse = Http::timeout(10)->get('https://ar.wikipedia.org/api/rest_v1/page/summary/'.urlencode($query));
             if ($wikiResponse->successful() && isset($wikiResponse->json()['thumbnail']['source'])) {
                 $imageUrl = $wikiResponse->json()['thumbnail']['source'];
             }
         } catch (\Exception $e) {
-            Log::warning('Failed to fetch Wikipedia image for crop: ' . $query);
+            Log::warning('Failed to fetch Wikipedia image for crop: '.$query);
         }
+
         return $imageUrl;
     }
 
@@ -87,19 +88,21 @@ class CropGuideService
         try {
             $response = Http::timeout(20)->post($geminiUrl, [
                 'contents' => [['parts' => [['text' => $prompt]]]],
-                'generationConfig' => ['responseMimeType' => 'application/json']
+                'generationConfig' => ['responseMimeType' => 'application/json'],
             ]);
 
             if ($response->successful()) {
                 $content = $response->json()['candidates'][0]['content']['parts'][0]['text'] ?? null;
                 if ($content) {
                     $decoded = json_decode(trim($content), true);
+
                     return json_last_error() === JSON_ERROR_NONE ? $decoded : null;
                 }
             }
         } catch (\Exception $e) {
-            Log::error('Error calling Gemini: ' . $e->getMessage());
+            Log::error('Error calling Gemini: '.$e->getMessage());
         }
+
         return null;
     }
 }

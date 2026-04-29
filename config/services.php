@@ -47,7 +47,6 @@ return [
         'key' => env('PERENUAL_API_KEY'),
     ],
 
-
     'firebase' => [
         'api_key' => env('FIREBASE_API_KEY'),
         'database_url' => env('FIREBASE_DATABASE_URL'),

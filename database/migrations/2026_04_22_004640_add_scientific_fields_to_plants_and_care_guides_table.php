@@ -65,12 +65,12 @@ return new class extends Migration
 
         Schema::table('care_guides', function (Blueprint $table) {
             $table->dropColumn([
-                'min_temp', 'max_temp', 'light_type', 'rainfall', 'min_humidity', 
-                'max_humidity', 'irrigation_level', 'life_cycle', 'cultivation_method', 
-                'planting_depth', 'soil_texture', 'min_ph', 'max_ph', 'seed_rate', 
-                'n_amount', 'p_amount', 'k_amount', 'companion_plants', 
-                'combative_plants', 'management_tips', 'succeeding_crops', 
-                'forbidden_crops', 'rotation_recommendation'
+                'min_temp', 'max_temp', 'light_type', 'rainfall', 'min_humidity',
+                'max_humidity', 'irrigation_level', 'life_cycle', 'cultivation_method',
+                'planting_depth', 'soil_texture', 'min_ph', 'max_ph', 'seed_rate',
+                'n_amount', 'p_amount', 'k_amount', 'companion_plants',
+                'combative_plants', 'management_tips', 'succeeding_crops',
+                'forbidden_crops', 'rotation_recommendation',
             ]);
         });
     }

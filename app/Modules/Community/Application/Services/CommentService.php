@@ -3,8 +3,8 @@
 namespace App\Modules\Community\Application\Services;
 
 use App\Models\User;
-use App\Modules\Community\Domain\Models\Post;
 use App\Modules\Community\Domain\Models\Comment;
+use App\Modules\Community\Domain\Models\Post;
 
 class CommentService
 {
@@ -17,7 +17,7 @@ class CommentService
 
         $comment = $post->comments()->create([
             'user_id' => $user->id,
-            'content' => $data['content']
+            'content' => $data['content'],
         ]);
 
         $post->increment('comments_count');
@@ -54,13 +54,14 @@ class CommentService
 
         $post = Post::findOrFail($comment->post_id);
         $deleted = $comment->delete();
-        
+
         if ($deleted) {
             $post->decrement('comments_count');
         }
 
         return $deleted;
     }
+
     /**
      * Get comments for a post.
      */

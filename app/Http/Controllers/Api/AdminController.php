@@ -3,14 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Traits\ApiResponder;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
-use App\Models\User;
-use App\Models\Store;
-use App\Models\Product;
+use App\Models\IotDevice;
 use App\Models\Post;
+use App\Models\PostReport;
+use App\Models\Product;
+use App\Models\Store;
+use App\Models\User;
+use App\Traits\ApiResponder;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -24,10 +26,10 @@ class AdminController extends Controller
     public function getStats(): JsonResponse
     {
         return $this->success([
-            'users'    => User::count(),
-            'stores'   => Store::count(),
+            'users' => User::count(),
+            'stores' => Store::count(),
             'products' => Product::count(),
-            'posts'    => Post::count(),
+            'posts' => Post::count(),
         ]);
     }
 
@@ -46,12 +48,12 @@ class AdminController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $users->items(),
-            'meta'    => [
+            'data' => $users->items(),
+            'meta' => [
                 'current_page' => $users->currentPage(),
-                'last_page'    => $users->lastPage(),
-                'per_page'     => $users->perPage(),
-                'total'        => $users->total(),
+                'last_page' => $users->lastPage(),
+                'per_page' => $users->perPage(),
+                'total' => $users->total(),
             ],
         ]);
     }
@@ -70,9 +72,9 @@ class AdminController extends Controller
         $user->save();
 
         Log::info('Admin updated user role', [
-            'admin_id'    => auth()->id(),
+            'admin_id' => auth()->id(),
             'target_user' => $id,
-            'new_role'    => $request->user_type,
+            'new_role' => $request->user_type,
         ]);
 
         return $this->success(
@@ -88,11 +90,11 @@ class AdminController extends Controller
     public function toggleVerification($id): JsonResponse
     {
         $user = User::findOrFail($id);
-        $user->is_verified = !$user->is_verified;
+        $user->is_verified = ! $user->is_verified;
         $user->save();
 
         Log::info('Admin toggled user verification', [
-            'admin_id'    => auth()->id(),
+            'admin_id' => auth()->id(),
             'target_user' => $id,
             'is_verified' => $user->is_verified,
         ]);
@@ -117,7 +119,7 @@ class AdminController extends Controller
         $user->delete();
 
         Log::warning('Admin deleted user', [
-            'admin_id'    => auth()->id(),
+            'admin_id' => auth()->id(),
             'deleted_user' => $id,
         ]);
 
@@ -131,20 +133,20 @@ class AdminController extends Controller
     public function getReports(Request $request): JsonResponse
     {
         $perPage = min((int) $request->input('per_page', 20), 100);
-        
-        $reports = \App\Models\PostReport::with(['user:id,name', 'post:id,title,content,user_id'])
+
+        $reports = PostReport::with(['user:id,name', 'post:id,title,content,user_id'])
             ->where('status', 'pending')
             ->latest()
             ->paginate($perPage);
 
         return response()->json([
             'success' => true,
-            'data'    => $reports->items(),
-            'meta'    => [
+            'data' => $reports->items(),
+            'meta' => [
                 'current_page' => $reports->currentPage(),
-                'last_page'    => $reports->lastPage(),
-                'per_page'     => $reports->perPage(),
-                'total'        => $reports->total(),
+                'last_page' => $reports->lastPage(),
+                'per_page' => $reports->perPage(),
+                'total' => $reports->total(),
             ],
         ]);
     }
@@ -159,7 +161,7 @@ class AdminController extends Controller
             'action' => 'required|in:delete_post,dismiss,hide_post',
         ]);
 
-        $report = \App\Models\PostReport::findOrFail($id);
+        $report = PostReport::findOrFail($id);
         $post = Post::findOrFail($report->post_id);
 
         $message = '';
@@ -194,19 +196,19 @@ class AdminController extends Controller
     {
         $perPage = min((int) $request->input('per_page', 20), 100);
 
-        $requests = \App\Models\IotDevice::with('user:id,name,email')
+        $requests = IotDevice::with('user:id,name,email')
             ->where('status', 'pending')
             ->latest()
             ->paginate($perPage);
 
         return response()->json([
             'success' => true,
-            'data'    => $requests->items(),
-            'meta'    => [
+            'data' => $requests->items(),
+            'meta' => [
                 'current_page' => $requests->currentPage(),
-                'last_page'    => $requests->lastPage(),
-                'per_page'     => $requests->perPage(),
-                'total'        => $requests->total(),
+                'last_page' => $requests->lastPage(),
+                'per_page' => $requests->perPage(),
+                'total' => $requests->total(),
             ],
         ]);
     }
@@ -218,25 +220,25 @@ class AdminController extends Controller
     public function approveIotRequest(Request $request, $id): JsonResponse
     {
         $request->validate([
-            'device_id' => 'required|string|unique:iot_devices,device_id,' . $id,
-            'name'      => 'nullable|string|max:255',
+            'device_id' => 'required|string|unique:iot_devices,device_id,'.$id,
+            'name' => 'nullable|string|max:255',
         ]);
 
-        $device = \App\Models\IotDevice::findOrFail($id);
-        
+        $device = IotDevice::findOrFail($id);
+
         $device->update([
             'device_id' => $request->device_id,
-            'name'      => $request->name ?? 'نظام الري الذكي',
-            'status'    => 'active',
+            'name' => $request->name ?? 'نظام الري الذكي',
+            'status' => 'active',
         ]);
 
         // إشعار المستخدم (اختياري - يمكن توسيعه)
         // \App\Models\Notification::create([...]);
 
         Log::info('Admin approved IoT request', [
-            'admin_id'  => auth()->id(),
+            'admin_id' => auth()->id(),
             'device_id' => $device->id,
-            'unit_id'   => $request->device_id,
+            'unit_id' => $request->device_id,
         ]);
 
         return $this->success($device, 'تم تفعيل وحدة IoT للحساب بنجاح');
@@ -248,11 +250,11 @@ class AdminController extends Controller
      */
     public function rejectIotRequest($id): JsonResponse
     {
-        $device = \App\Models\IotDevice::findOrFail($id);
+        $device = IotDevice::findOrFail($id);
         $device->delete();
 
         Log::warning('Admin rejected/deleted IoT request', [
-            'admin_id'  => auth()->id(),
+            'admin_id' => auth()->id(),
             'target_id' => $id,
         ]);
 

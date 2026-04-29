@@ -3,9 +3,9 @@
 namespace App\Modules\PlantGuide\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Farm\Application\Services\CropService;
 use App\Traits\ApiResponder;
 use Illuminate\Http\Request;
-use App\Modules\Farm\Application\Services\CropService;
 
 class FarmController extends Controller
 {
@@ -21,7 +21,7 @@ class FarmController extends Controller
     public function addCrop(Request $request)
     {
         $request->validate([
-            'name'      => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'crop_type' => 'required|string',
         ]);
 
@@ -42,6 +42,7 @@ class FarmController extends Controller
     {
         try {
             $this->cropService->removeCrop($request->user(), $id);
+
             return $this->success(null, 'تم حذف المحصول بنجاح');
         } catch (\Exception $e) {
             return $this->error('المحصول غير موجود', 404);

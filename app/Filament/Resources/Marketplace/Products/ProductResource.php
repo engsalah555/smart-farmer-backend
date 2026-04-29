@@ -8,10 +8,8 @@ use App\Filament\Resources\Marketplace\Products\Pages\ListProducts;
 use App\Filament\Resources\Marketplace\Products\Schemas\ProductForm;
 use App\Filament\Resources\Marketplace\Products\Tables\ProductsTable;
 use App\Modules\Marketplace\Domain\Models\Product;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ProductResource extends Resource

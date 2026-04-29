@@ -2,14 +2,16 @@
 
 namespace App\Modules\Marketplace\Domain\Models;
 
+use App\Traits\HasStoreScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Builder;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use App\Traits\HasStoreScope;
 
 /**
  * نموذج كتالوج المتجر
@@ -20,11 +22,11 @@ use App\Traits\HasStoreScope;
  * @property string|null $description
  * @property string|null $image_url
  * @property int $sort_order
- * @property int|null $products_count  (مُوجَد بواسطة withCount)
+ * @property int|null $products_count (مُوجَد بواسطة withCount)
  */
 class StoreCatalog extends Model implements HasMedia
 {
-    use SoftDeletes, InteractsWithMedia, HasStoreScope;
+    use HasStoreScope, InteractsWithMedia, SoftDeletes;
 
     protected $fillable = [
         'store_id',
@@ -51,7 +53,7 @@ class StoreCatalog extends Model implements HasMedia
                 return asset($path);
             }
 
-            return asset('storage/' . $path);
+            return asset('storage/'.$path);
         }
 
         return $this->getFirstMediaUrl('catalog_image') ?: null;
@@ -65,12 +67,12 @@ class StoreCatalog extends Model implements HasMedia
     // RELATIONSHIPS
     // =========================================================
 
-    public function store(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
     }
 
-    public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'catalog_id');
     }

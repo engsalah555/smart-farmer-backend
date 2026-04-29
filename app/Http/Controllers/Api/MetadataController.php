@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Category;
 
 class MetadataController extends Controller
 {
@@ -15,10 +15,10 @@ class MetadataController extends Controller
     {
         return $this->success([
             'marketplace' => [
-                'categories' => \App\Models\Category::marketplace()->get()->map(fn($cat) => [
-                    'id'    => $cat->name,
+                'categories' => Category::marketplace()->get()->map(fn ($cat) => [
+                    'id' => $cat->name,
                     'label' => $cat->name,
-                    'icon'  => $cat->icon ?? 'default',
+                    'icon' => $cat->icon ?? 'default',
                 ]),
                 'units' => \DB::table('units')->pluck('name'),
                 'payment_methods' => \DB::table('payment_methods')
@@ -30,7 +30,7 @@ class MetadataController extends Controller
                 'contact_email' => 'support@smartfarm.sa',
                 'terms_url' => 'https://smartfarm.sa/terms',
                 'privacy_url' => 'https://smartfarm.sa/privacy',
-            ]
+            ],
         ]);
     }
 
@@ -45,7 +45,7 @@ class MetadataController extends Controller
                 'version' => config('app.version', '2.0.0'),
                 'build_number' => 1,
                 'force_update' => false,
-            ]
+            ],
         ]);
     }
 }

@@ -8,10 +8,8 @@ use App\Filament\Resources\Community\PostReports\Pages\ListPostReports;
 use App\Filament\Resources\Community\PostReports\Schemas\PostReportForm;
 use App\Filament\Resources\Community\PostReports\Tables\PostReportsTable;
 use App\Modules\Community\Domain\Models\PostReport;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class PostReportResource extends Resource

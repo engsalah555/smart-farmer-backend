@@ -5,9 +5,7 @@ namespace App\Events;
 use App\Models\IotDevice;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -17,6 +15,7 @@ class DeviceTelemetryUpdated implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $device;
+
     public $telemetryData;
 
     /**
@@ -36,10 +35,10 @@ class DeviceTelemetryUpdated implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('user.' . $this->device->user_id),
+            new PrivateChannel('user.'.$this->device->user_id),
         ];
     }
-    
+
     public function broadcastAs(): string
     {
         return 'DeviceTelemetryUpdated';

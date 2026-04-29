@@ -4,16 +4,18 @@ namespace App\Modules\Marketplace\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Marketplace\OrderRequest;
+use App\Http\Resources\Marketplace\OrderResource;
 use App\Modules\Marketplace\Application\Services\MarketplaceService;
+use App\Modules\Marketplace\Domain\Models\Order;
+use App\Traits\ApiResponder;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Exception;
-
-use App\Modules\Marketplace\Domain\Models\Order;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
-    use \App\Traits\ApiResponder;
+    use ApiResponder;
 
     public function __construct(protected MarketplaceService $marketplaceService) {}
 
@@ -24,7 +26,8 @@ class OrderController extends Controller
     {
         try {
             $cancelledOrder = $this->marketplaceService->cancelOrder($order, $request->user()->id);
-            return $this->success(new \App\Http\Resources\Marketplace\OrderResource($cancelledOrder), 'تم إلغاء الطلب بنجاح');
+
+            return $this->success(new OrderResource($cancelledOrder), 'تم إلغاء الطلب بنجاح');
         } catch (Exception $e) {
             return $this->error($e->getMessage(), 422);
         }
@@ -42,16 +45,16 @@ class OrderController extends Controller
                 $request->file('receipt_image')
             );
 
-            return $this->success(new \App\Http\Resources\Marketplace\OrderResource($order), 'تم إرسال الطلب بنجاح', 201);
+            return $this->success(new OrderResource($order), 'تم إرسال الطلب بنجاح', 201);
         } catch (Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Checkout failed', [
+            Log::error('Checkout failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'user_id' => $request->user()->id,
-                'data' => $request->all()
+                'data' => $request->all(),
             ]);
 
-            return $this->error('حدث خطأ أثناء معالجة الطلب: ' . $e->getMessage(), 500);
+            return $this->error('حدث خطأ أثناء معالجة الطلب: '.$e->getMessage(), 500);
         }
     }
 
@@ -68,13 +71,13 @@ class OrderController extends Controller
             ->latest()
             ->paginate($perPage);
 
-        \Illuminate\Support\Facades\Log::info('Buyer orders list', [
+        Log::info('Buyer orders list', [
             'user_id' => $request->user()->id,
             'count' => $orders->count(),
             'total' => $orders->total(),
-            'sample_order' => $orders->first() ? (new \App\Http\Resources\Marketplace\OrderResource($orders->first()))->toArray($request) : null,
+            'sample_order' => $orders->first() ? (new OrderResource($orders->first()))->toArray($request) : null,
         ]);
 
-        return $this->paginated($orders, \App\Http\Resources\Marketplace\OrderResource::class);
+        return $this->paginated($orders, OrderResource::class);
     }
 }

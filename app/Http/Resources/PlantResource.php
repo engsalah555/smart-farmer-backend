@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Plant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\Plant
+ * @mixin Plant
  */
 class PlantResource extends JsonResource
 {
@@ -51,18 +52,18 @@ class PlantResource extends JsonResource
             if (filter_var($path, FILTER_VALIDATE_URL)) {
                 return $path;
             }
-            
+
             $cleanPath = ltrim($path, '/');
             if (str_starts_with($cleanPath, 'storage/')) {
                 return asset($cleanPath);
             }
-            
-            return asset('storage/' . $cleanPath);
+
+            return asset('storage/'.$cleanPath);
         }
 
         $fallback = 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80';
-        
-        return $conversion 
+
+        return $conversion
             ? ($this->getFirstMediaUrl($collection, $conversion) ?: $fallback)
             : ($this->getFirstMediaUrl($collection) ?: $fallback);
     }

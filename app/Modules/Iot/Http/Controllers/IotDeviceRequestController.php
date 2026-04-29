@@ -25,7 +25,7 @@ class IotDeviceRequestController extends Controller
 
         if ($existingRequest) {
             return response()->json([
-                'message' => 'لديك طلب قيد الانتظار مسبقاً.'
+                'message' => 'لديك طلب قيد الانتظار مسبقاً.',
             ], 400);
         }
 
@@ -37,7 +37,7 @@ class IotDeviceRequestController extends Controller
 
         return response()->json([
             'message' => 'تم إرسال طلبك بنجاح. سيقوم المسؤول بمراجعته قريباً.',
-            'request' => $deviceRequest
+            'request' => $deviceRequest,
         ], 201);
     }
 
@@ -51,7 +51,7 @@ class IotDeviceRequestController extends Controller
             ->get();
 
         return response()->json([
-            'requests' => $requests
+            'requests' => $requests,
         ]);
     }
 }

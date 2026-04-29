@@ -4,6 +4,7 @@ namespace App\Modules\Marketplace\Domain\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * نموذج تقييم المنتج
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $product_id
  * @property int $user_id
- * @property float $rating  (1.0 - 5.0)
+ * @property float $rating (1.0 - 5.0)
  * @property string|null $comment
  */
 class ProductReview extends Model
@@ -36,12 +37,12 @@ class ProductReview extends Model
     // RELATIONSHIPS
     // =========================================================
 
-    public function product(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -54,9 +55,7 @@ class ProductReview extends Model
      * التحقق من أن المستخدم مؤهل لتقييم هذا المنتج.
      * القاعدة: يجب أن يكون مشترياً وليس صاحب المتجر.
      *
-     * @param  \App\Models\User    $user
-     * @param  \App\Models\Product $product
-     * @return bool
+     * @param  \App\Models\Product  $product
      */
     public static function canUserReview(User $user, Product $product): bool
     {

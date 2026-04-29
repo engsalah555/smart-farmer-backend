@@ -7,7 +7,6 @@ use App\Modules\Community\Domain\Models\Post;
 use App\Modules\Community\Domain\Repositories\PostRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 
 class PostService
 {
@@ -22,11 +21,12 @@ class PostService
     {
         $page = request()->get('page', 1);
         // Cache feed per user if no search query
-        if (!$search) {
+        if (! $search) {
             return Cache::remember("user_{$user->id}_feed_p{$page}_s{$perPage}", 300, function () use ($user, $perPage) {
                 return $this->postRepository->getAll($user, null, $perPage);
             });
         }
+
         return $this->postRepository->getAll($user, $search, $perPage);
     }
 
@@ -34,7 +34,7 @@ class PostService
     {
         // ✅ التحقق التلقائي من ملاءمة المحتوى (Basic AI/Keyword moderation)
         $isRelevant = $this->checkContentRelevance($data['content'] ?? '');
-        if (!$isRelevant) {
+        if (! $isRelevant) {
             // يمكننا إما منع النشر أو وسمه للمراجعة
             // سنقوم هنا بوسمه كـ 'محتمل أنه غير متعلق بالزراعة' عن طريق زيادة البلاغات تلقائياً أو إخفائه
             $data['is_hidden'] = false; // نتركه ظاهراً حالياً لكن يمكن تغييره لـ true للمراجعة
@@ -47,6 +47,7 @@ class PostService
 
         $post = $this->postRepository->create($user, $data);
         $this->clearGlobalCaches();
+
         return $post;
     }
 
@@ -56,12 +57,12 @@ class PostService
     protected function checkContentRelevance(string $content): bool
     {
         $content = mb_strtolower($content);
-        
+
         // 1. قائمة كلمات زراعية أساسية (Arabic Agricultural Keywords)
         $agriKeywords = [
-            'نبات', 'زراعة', 'تربة', 'سماد', 'ري', 'محصول', 'شجرة', 'فواكه', 'خضروات', 'بذور', 
+            'نبات', 'زراعة', 'تربة', 'سماد', 'ري', 'محصول', 'شجرة', 'فواكه', 'خضروات', 'بذور',
             'آفات', 'مكافحة', 'بيت محمي', 'هيدروبونيك', 'ماء', 'تسميد', 'غرس', 'مزرعة', 'فلاح',
-            'حصد', 'إنتاج', 'مشاتل', 'شتلة', 'تلقيح', 'أزهار', 'ثمار', 'بيئة', 'طبيعة'
+            'حصد', 'إنتاج', 'مشاتل', 'شتلة', 'تلقيح', 'أزهار', 'ثمار', 'بيئة', 'طبيعة',
         ];
 
         // 2. التحقق من وجود كلمة زراعية واحدة على الأقل (اختياري - قد يكون صارماً جداً)
@@ -82,14 +83,14 @@ class PostService
         }
 
         // ملاحظة: يمكن هنا استدعاء خدمة AI (مثل Gemini API) لتحليل المحتوى بشكل أدق
-        return true; 
+        return true;
     }
 
     public function updatePost(User $user, $id, array $data, $imageFile = null, bool $removeImage = false): Post
     {
         $post = $this->postRepository->findById($id);
-        if (!$post || ($post->user_id !== $user->id)) {
-            throw new \Exception("Unauthorized or Post not found");
+        if (! $post || ($post->user_id !== $user->id)) {
+            throw new \Exception('Unauthorized or Post not found');
         }
 
         if ($imageFile) {
@@ -101,39 +102,47 @@ class PostService
 
         $this->postRepository->update($post, $data);
         $this->clearGlobalCaches();
+
         return $post->load(['user'])->loadCount(['likes', 'comments']);
     }
 
     public function deletePost(User $user, $id): bool
     {
         $post = $this->postRepository->findById($id);
-        if (!$post || ($post->user_id !== $user->id && $user->user_type !== 'admin')) {
-            throw new \Exception("Unauthorized or Post not found");
+        if (! $post || ($post->user_id !== $user->id && $user->user_type !== 'admin')) {
+            throw new \Exception('Unauthorized or Post not found');
         }
 
         $deleted = $this->postRepository->delete($post);
         if ($deleted) {
             $this->clearGlobalCaches();
         }
+
         return $deleted;
     }
 
     public function toggleLike(User $user, $id): bool
     {
         $post = $this->postRepository->findById($id);
-        if (!$post) throw new \Exception("Post not found");
-        
+        if (! $post) {
+            throw new \Exception('Post not found');
+        }
+
         $isLiked = $this->postRepository->toggleLike($post, $user);
         Cache::forget("user_{$user->id}_feed"); // Optional: target only this user's cache
+
         return $isLiked;
     }
 
     public function toggleSave(User $user, $id): bool
     {
         $post = $this->postRepository->findById($id);
-        if (!$post) throw new \Exception("Post not found");
-        
+        if (! $post) {
+            throw new \Exception('Post not found');
+        }
+
         $isSaved = $this->postRepository->toggleSave($post, $user);
+
         return $isSaved;
     }
 
@@ -155,14 +164,16 @@ class PostService
     public function reportPost(User $user, $id, array $data): bool
     {
         $post = $this->postRepository->findById($id);
-        if (!$post) throw new \Exception("المشاركة غير موجودة");
-        
+        if (! $post) {
+            throw new \Exception('المشاركة غير موجودة');
+        }
+
         return $this->postRepository->report($post, $user, $data);
     }
 
     protected function clearGlobalCaches()
     {
-        // In a real microservice, we'd emit an event. 
+        // In a real microservice, we'd emit an event.
         // Here we just clear or use tags if supported.
         // For simplicity, we can use a cache key versioning or clear all related keys.
     }

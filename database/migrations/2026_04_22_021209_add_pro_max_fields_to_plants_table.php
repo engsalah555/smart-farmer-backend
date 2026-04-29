@@ -37,7 +37,7 @@ return new class extends Migration
                 'pests_and_diseases',
                 'harvesting_and_storage',
                 'water_needs',
-                'fertilizer_needs'
+                'fertilizer_needs',
             ]);
         });
     }

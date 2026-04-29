@@ -5,6 +5,7 @@ namespace App\Modules\Marketplace\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Marketplace\StoreUpdateRequest;
 use App\Http\Resources\StoreResource;
+use App\Models\User;
 use App\Modules\Marketplace\Application\Services\MarketplaceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,13 +21,13 @@ class StoreController extends Controller
     {
         $store = $this->marketplaceService->getSellerStore($request->user());
 
-        if (!$store) {
+        if (! $store) {
             return response()->json(['success' => false, 'message' => 'المتجر غير موجود'], 404);
         }
 
         return response()->json([
             'success' => true,
-            'data'    => new StoreResource($store),
+            'data' => new StoreResource($store),
         ]);
     }
 
@@ -35,10 +36,10 @@ class StoreController extends Controller
      */
     public function update(StoreUpdateRequest $request): JsonResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = $request->user();
         $store = $user->store;
-        
+
         $updatedStore = $this->marketplaceService->updateStore(
             $store,
             $request->validated(),
@@ -48,7 +49,7 @@ class StoreController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'تم تحديث بيانات المتجر بنجاح',
-            'data'    => new StoreResource($updatedStore),
+            'data' => new StoreResource($updatedStore),
         ]);
     }
 }

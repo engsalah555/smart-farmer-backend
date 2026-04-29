@@ -2,12 +2,11 @@
 
 namespace App\Filament\Resources\PlantGuide\Plants\Schemas;
 
-use Filament\Schemas\Components\Grid;
-use Filament\Forms\Components\RichEditor;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class PlantForm

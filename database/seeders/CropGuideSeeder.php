@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\CropGuide;
 use Illuminate\Database\Seeder;
 
 class CropGuideSeeder extends Seeder
@@ -76,7 +76,7 @@ class CropGuideSeeder extends Seeder
         ];
 
         foreach ($guides as $guide) {
-            \App\Models\CropGuide::create($guide);
+            CropGuide::create($guide);
         }
     }
 }

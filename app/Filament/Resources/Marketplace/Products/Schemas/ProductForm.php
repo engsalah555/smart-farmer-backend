@@ -3,13 +3,14 @@
 namespace App\Filament\Resources\Marketplace\Products\Schemas;
 
 use Filament\Forms\Components\FileUpload;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class ProductForm
 {
@@ -25,8 +26,8 @@ class ProductForm
                                     ->label('اسم المنتج')
                                     ->required()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
-                                
+                                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+
                                 TextInput::make('slug')
                                     ->label('الرابط المختصر (Slug)')
                                     ->required()
@@ -53,7 +54,7 @@ class ProductForm
                                         'other' => 'أخرى',
                                     ])
                                     ->required(),
-                                
+
                                 Toggle::make('is_featured')
                                     ->label('منتج مميز')
                                     ->inline(false),
@@ -74,7 +75,7 @@ class ProductForm
                                     ->numeric()
                                     ->prefix('﷼')
                                     ->required(),
-                                
+
                                 TextInput::make('unit')
                                     ->label('الوحدة')
                                     ->placeholder('كجم، كيس، حبة...')
@@ -95,7 +96,7 @@ class ProductForm
                             ->image()
                             ->disk('public')
                             ->directory('products/main'),
-                        
+
                         FileUpload::make('gallery')
                             ->label('معرض الصور')
                             ->image()

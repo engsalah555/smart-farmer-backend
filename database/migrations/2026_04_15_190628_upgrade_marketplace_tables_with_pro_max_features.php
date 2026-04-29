@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('slug')->unique()->nullable()->after('name');
             $table->boolean('is_featured')->default(false)->after('image_url');
             $table->softDeletes()->after('updated_at');
-            
+
             // إضافة Index على الـ slug والـ is_featured للسرعة
             $table->index('slug');
             $table->index('is_featured');

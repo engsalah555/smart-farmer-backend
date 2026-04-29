@@ -2,16 +2,18 @@
 
 namespace App\Modules\PlantGuide\Domain\Models;
 
+use Database\Factories\PlantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Plant extends Model implements HasMedia
 {
-    /** @use HasFactory<\Database\Factories\PlantFactory> */
+    /** @use HasFactory<PlantFactory> */
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
@@ -35,21 +37,21 @@ class Plant extends Model implements HasMedia
         'fertilizer_needs',
     ];
 
-    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function careGuide(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function careGuide(): HasOne
     {
         return $this->hasOne(CareGuide::class);
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-              ->width(300)
-              ->height(300)
-              ->nonQueued();
+            ->width(300)
+            ->height(300)
+            ->nonQueued();
     }
 }

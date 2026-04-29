@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\PlantIntegrationService;
+use Illuminate\Console\Command;
 
 class FetchPlantsCommand extends Command
 {
@@ -27,7 +27,7 @@ class FetchPlantsCommand extends Command
     public function handle(PlantIntegrationService $service)
     {
         $page = $this->option('page');
-        
+
         $this->info("Starting plant fetch for page {$page}...");
 
         $success = $service->fetchAndStorePlants($page);

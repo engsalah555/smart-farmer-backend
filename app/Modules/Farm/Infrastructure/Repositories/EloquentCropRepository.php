@@ -3,8 +3,8 @@
 namespace App\Modules\Farm\Infrastructure\Repositories;
 
 use App\Models\User;
-use App\Modules\PlantGuide\Domain\Models\Crop;
 use App\Modules\Farm\Domain\Repositories\CropRepositoryInterface;
+use App\Modules\PlantGuide\Domain\Models\Crop;
 use Illuminate\Database\Eloquent\Collection;
 
 class EloquentCropRepository implements CropRepositoryInterface
@@ -14,7 +14,7 @@ class EloquentCropRepository implements CropRepositoryInterface
         return $user->crops()->latest()->get();
     }
 
-    public function createForUser(User $user, array $data): \App\Modules\PlantGuide\Domain\Models\Crop
+    public function createForUser(User $user, array $data): Crop
     {
         return $user->crops()->create([
             'name' => $data['name'],
@@ -23,12 +23,12 @@ class EloquentCropRepository implements CropRepositoryInterface
         ]);
     }
 
-    public function findByIdForUser(User $user, $id): ?\App\Modules\PlantGuide\Domain\Models\Crop
+    public function findByIdForUser(User $user, $id): ?Crop
     {
         return $user->crops()->find($id);
     }
 
-    public function delete(\App\Modules\PlantGuide\Domain\Models\Crop $crop): bool
+    public function delete(Crop $crop): bool
     {
         return $crop->delete();
     }

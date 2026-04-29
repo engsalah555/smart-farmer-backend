@@ -1,15 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Modules\Marketplace\Http\Controllers\ProductController;
-use App\Modules\Marketplace\Http\Controllers\StoreController;
-use App\Modules\Marketplace\Http\Controllers\ReviewController;
 use App\Modules\Marketplace\Http\Controllers\OrderController;
+use App\Modules\Marketplace\Http\Controllers\ProductController;
+use App\Modules\Marketplace\Http\Controllers\ReviewController;
+use App\Modules\Marketplace\Http\Controllers\Seller\CatalogController;
+use App\Modules\Marketplace\Http\Controllers\Seller\OrderController as SellerOrderController;
 use App\Modules\Marketplace\Http\Controllers\Seller\ProductController as SellerProductController;
 use App\Modules\Marketplace\Http\Controllers\Seller\ProductMediaController;
-use App\Modules\Marketplace\Http\Controllers\Seller\CatalogController;
 use App\Modules\Marketplace\Http\Controllers\Seller\StoreController as SellerStoreController;
-use App\Modules\Marketplace\Http\Controllers\Seller\OrderController as SellerOrderController;
+use App\Modules\Marketplace\Http\Controllers\StoreController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('marketplace')->group(function () {
     // --- Public Routes ---
@@ -20,10 +20,10 @@ Route::prefix('marketplace')->group(function () {
         Route::get('/stores/{storeIdentifier}/products', [StoreController::class, 'products']);
         Route::get('/products/{product}/reviews', [ReviewController::class, 'index']);
     });
-    
+
     // --- Authenticated Routes ---
     Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
-        
+
         // Seller Routes
         Route::prefix('seller')->middleware(['can:sell', 'store_owner'])->group(function () {
             Route::get('/products', [SellerProductController::class, 'index']);
