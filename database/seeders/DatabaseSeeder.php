@@ -16,10 +16,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // إنشاء مستخدم تجريبي افتراضي
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => \Hash::make('password'),
+            ]
+        );
 
         // إضافة بيانات النباتات اليمنية
         $this->call([

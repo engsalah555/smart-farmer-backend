@@ -2,18 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\CareGuide;
+use App\Modules\PlantGuide\Domain\Models\CareGuide;
 use App\Models\Category;
-use App\Models\Plant;
+use App\Modules\PlantGuide\Domain\Models\Plant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class PlantSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::disableForeignKeyConstraints();
         CareGuide::truncate();
         Plant::truncate();
 
@@ -23,7 +24,7 @@ class PlantSeeder extends Seeder
 
         Category::whereIn('name', $cropCategoryNames)->delete();
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        Schema::enableForeignKeyConstraints();
 
         $categoryMap = [];
         foreach ($data['categories'] as $catData) {
