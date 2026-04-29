@@ -1,5 +1,12 @@
 <?php
 
+use Knuckles\Scribe\Config\AuthIn;
+use Knuckles\Scribe\Config\Defaults;
+use Knuckles\Scribe\Extracting\Strategies;
+
+use function Knuckles\Scribe\Config\configureStrategy;
+use function Knuckles\Scribe\Config\removeStrategies;
+
 // Only the most common configs are shown. See the https://scribe.knuckles.wtf/laravel/reference/config for all.
 
 return [
@@ -105,7 +112,7 @@ return [
         'default' => false,
 
         // Where is the auth value meant to be sent in a request?
-        'in' => 'bearer',
+        'in' => AuthIn::BEARER->value,
 
         // The name of the auth parameter (e.g. token, key, apiKey) or header (e.g. Authorization, Api-Key).
         'name' => 'key',
@@ -207,25 +214,36 @@ return [
     // Use removeStrategies() to remove an included strategy.
     'strategies' => [
         'metadata' => [
-            // ...Defaults::METADATA_STRATEGIES
+            ...Defaults::METADATA_STRATEGIES,
         ],
         'headers' => [
-            // ...Defaults::HEADERS_STRATEGIES
+            ...Defaults::HEADERS_STRATEGIES,
+            Strategies\StaticData::withSettings(data: [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ]),
         ],
         'urlParameters' => [
-            // ...Defaults::URL_PARAMETERS_STRATEGIES
+            ...Defaults::URL_PARAMETERS_STRATEGIES,
         ],
         'queryParameters' => [
-            // ...Defaults::QUERY_PARAMETERS_STRATEGIES
+            ...Defaults::QUERY_PARAMETERS_STRATEGIES,
         ],
         'bodyParameters' => [
-            // ...Defaults::BODY_PARAMETERS_STRATEGIES
+            ...Defaults::BODY_PARAMETERS_STRATEGIES,
         ],
-        'responses' => [
-            // Defaults::RESPONSES_STRATEGIES
-        ],
+        'responses' => configureStrategy(
+            Defaults::RESPONSES_STRATEGIES,
+            Strategies\Responses\ResponseCalls::withSettings(
+                only: ['GET *'],
+                // Recommended: disable debug mode in response calls to avoid error stack traces in responses
+                config: [
+                    'app.debug' => false,
+                ]
+            )
+        ),
         'responseFields' => [
-            // ...Defaults::RESPONSE_FIELDS_STRATEGIES
+            ...Defaults::RESPONSE_FIELDS_STRATEGIES,
         ],
     ],
 
