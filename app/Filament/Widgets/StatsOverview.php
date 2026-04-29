@@ -12,7 +12,7 @@ use Illuminate\Support\Carbon;
 class StatsOverview extends BaseWidget
 {
     protected static ?int $sort = 1;
-    protected static ?string $pollingInterval = '15s';
+    protected ?string $pollingInterval = '15s';
 
     protected function getStats(): array
     {
