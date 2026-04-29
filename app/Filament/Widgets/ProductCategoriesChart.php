@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class ProductCategoriesChart extends ChartWidget
 {
-    protected static ?string $heading = 'توزيع المنتجات حسب التصنيف';
+    protected ?string $heading = 'توزيع المنتجات حسب التصنيف';
     protected static ?int $sort = 3;
     protected int | string | array $columnSpan = [
         'md' => 1,

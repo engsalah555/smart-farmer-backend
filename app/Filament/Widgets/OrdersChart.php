@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrdersChart extends ChartWidget
 {
-    protected static ?string $heading = 'نمو المبيعات الشهري';
+    protected ?string $heading = 'نمو المبيعات الشهري';
     protected static ?int $sort = 2;
     protected static ?string $pollingInterval = '30s';
     protected int | string | array $columnSpan = [
