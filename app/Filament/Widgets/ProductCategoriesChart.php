@@ -10,6 +10,7 @@ class ProductCategoriesChart extends ChartWidget
 {
     protected ?string $heading = 'توزيع المنتجات حسب التصنيف';
     protected static ?int $sort = 3;
+    protected ?string $pollingInterval = '30s';
     protected int | string | array $columnSpan = [
         'md' => 1,
         'xl' => 1,
@@ -33,6 +34,8 @@ class ProductCategoriesChart extends ChartWidget
                         '#ef4444', // red
                         '#8b5cf6', // violet
                         '#ec4899', // pink
+                        '#06b6d4', // cyan
+                        '#f97316', // orange
                     ],
                 ],
             ],
