@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\PaymentMethod;
 
 class MetadataController extends Controller
 {
@@ -21,8 +22,7 @@ class MetadataController extends Controller
                     'icon' => $cat->icon ?? 'default',
                 ]),
                 'units' => \DB::table('units')->pluck('name'),
-                'payment_methods' => \DB::table('payment_methods')
-                    ->where('is_active', true)
+                'payment_methods' => PaymentMethod::where('is_active', true)
                     ->get(['identifier as id', 'label', 'icon']),
             ],
             'app_info' => [
