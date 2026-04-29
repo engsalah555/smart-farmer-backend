@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('زرعة')
+            ->brandName('زرعتي')
             ->colors([
                 'primary' => '#10b981', // Emerald Green as requested
                 'gray' => Color::Zinc,
