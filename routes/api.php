@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\HomeBatchController;
 use App\Http\Controllers\Api\MetadataController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\VerificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +37,11 @@ Route::middleware('throttle:api')->group(function () {
     // Metadata & Config (Single Source of Truth)
     Route::get('/metadata', [MetadataController::class, 'index']);
     Route::get('/app-version', [MetadataController::class, 'appVersion']);
+    
+    // Public verification check for debugging 404s
+    Route::get('/verification/ping', function() {
+        return response()->json(['success' => true, 'message' => 'Verification endpoint is reachable']);
+    });
 });
 
 // =========================================================
@@ -58,6 +64,11 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+
+    Route::prefix('verification')->group(function () {
+        Route::post('/submit', [VerificationController::class, 'store']);
+        Route::get('/status', [VerificationController::class, 'status']);
+    });
 
     // ---- Admin (Protected) ----
     Route::prefix('admin')->middleware('can:admin')->group(function () {
