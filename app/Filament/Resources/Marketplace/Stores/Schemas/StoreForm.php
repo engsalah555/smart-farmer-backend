@@ -9,6 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use App\Models\Category;
 use Illuminate\Support\Str;
 
 class StoreForm
@@ -41,14 +42,7 @@ class StoreForm
 
                                 Select::make('store_type')
                                     ->label('نوع المتجر')
-                                    ->options([
-                                        'بذور' => 'بذور',
-                                        'أسمدة' => 'أسمدة',
-                                        'مبيدات' => 'مبيدات',
-                                        'محاصيل' => 'محاصيل',
-                                        'معدات' => 'معدات',
-                                        'مشاتل' => 'مشاتل',
-                                    ])
+                                    ->options(Category::marketplace()->pluck('name', 'name'))
                                     ->required(),
 
                                 Select::make('status')

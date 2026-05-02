@@ -14,11 +14,11 @@ class MarketplaceCategorySeeder extends Seeder
     {
         $categories = [
             ['name' => 'بذور', 'icon' => 'seeds', 'type' => 'marketplace', 'description' => 'بذور نباتات ومحاصيل متنوعة'],
-            ['name' => 'اسمدة', 'icon' => 'fertilizer', 'type' => 'marketplace', 'description' => 'أسمدة تربة عضوية وكيميائية'],
+            ['name' => 'أسمدة', 'icon' => 'fertilizer', 'type' => 'marketplace', 'description' => 'أسمدة تربة عضوية وكيميائية'],
             ['name' => 'مبيدات', 'icon' => 'pest', 'type' => 'marketplace', 'description' => 'مبيدات حشرية وفطرية'],
             ['name' => 'محاصيل', 'icon' => 'harvest', 'type' => 'marketplace', 'description' => 'محاصيل زراعية طازجة'],
             ['name' => 'معدات', 'icon' => 'tools', 'type' => 'marketplace', 'description' => 'أدوات ومعدات زراعية'],
-            ['name' => 'المشاتل', 'icon' => 'nursery', 'type' => 'marketplace', 'description' => 'شتلات ونباتات زينة'],
+            ['name' => 'مشاتل', 'icon' => 'nursery', 'type' => 'marketplace', 'description' => 'شتلات ونباتات زينة'],
         ];
 
         foreach ($categories as $cat) {
