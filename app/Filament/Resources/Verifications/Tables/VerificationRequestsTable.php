@@ -26,8 +26,10 @@ class VerificationRequestsTable
                     ->badge()
                     ->formatStateUsing(fn ($state) => match($state) {
                         'national_id' => 'هوية وطنية',
-                        'license' => 'رخصة',
-                        default => 'أخرى',
+                        'driver_license' => 'رخصة قيادة',
+                        'passport' => 'جواز سفر',
+                        'commercial_register' => 'سجل تجاري',
+                        default => $state,
                     }),
 
                 ImageColumn::make('document_path')

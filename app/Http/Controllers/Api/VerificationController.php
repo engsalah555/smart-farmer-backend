@@ -42,7 +42,7 @@ class VerificationController extends Controller
             VerificationRequest::create([
                 'user_id' => $user->id,
                 'document_type' => $request->document_type,
-                'document_path' => '/storage/' . $path,
+                'document_path' => $path,
                 'status' => 'pending',
             ]);
 
