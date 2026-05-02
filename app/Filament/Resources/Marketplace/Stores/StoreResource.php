@@ -30,6 +30,16 @@ class StoreResource extends Resource
         return 'المتاجر';
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('status', 'pending')->count() ?: null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
     public static function getModelLabel(): string
     {
         return 'متجر';

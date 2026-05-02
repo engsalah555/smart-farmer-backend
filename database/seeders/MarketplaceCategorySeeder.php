@@ -13,12 +13,12 @@ class MarketplaceCategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'بذور', 'icon' => 'seeds', 'type' => 'marketplace', 'description' => 'بذور نباتات ومحاصيل متنوعة'],
-            ['name' => 'أسمدة', 'icon' => 'fertilizer', 'type' => 'marketplace', 'description' => 'أسمدة تربة عضوية وكيميائية'],
-            ['name' => 'مبيدات', 'icon' => 'pest', 'type' => 'marketplace', 'description' => 'مبيدات حشرية وفطرية'],
-            ['name' => 'محاصيل', 'icon' => 'harvest', 'type' => 'marketplace', 'description' => 'محاصيل زراعية طازجة'],
+            ['name' => 'بذور', 'icon' => 'eco', 'type' => 'marketplace', 'description' => 'بذور نباتات ومحاصيل متنوعة'],
+            ['name' => 'أسمدة', 'icon' => 'opacity', 'type' => 'marketplace', 'description' => 'أسمدة تربة عضوية وكيميائية'],
+            ['name' => 'مبيدات', 'icon' => 'bug_report', 'type' => 'marketplace', 'description' => 'مبيدات حشرية وفطرية'],
+            ['name' => 'محاصيل', 'icon' => 'grass', 'type' => 'marketplace', 'description' => 'محاصيل زراعية طازجة'],
             ['name' => 'معدات', 'icon' => 'tools', 'type' => 'marketplace', 'description' => 'أدوات ومعدات زراعية'],
-            ['name' => 'مشاتل', 'icon' => 'nursery', 'type' => 'marketplace', 'description' => 'شتلات ونباتات زينة'],
+            ['name' => 'مشاتل', 'icon' => 'landscape', 'type' => 'marketplace', 'description' => 'شتلات ونباتات زينة'],
         ];
 
         foreach ($categories as $cat) {
