@@ -110,11 +110,21 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
     }
 
     /**
-     * Determine if the user is a seller (owns a store).
+     * Determine if the user is a seller (farmer or merchant).
+     * Admin is NOT considered a seller — use isAdmin() for admin checks.
+     * This matches the Flutter frontend's isSeller logic.
      */
     public function isSeller(): bool
     {
-        return $this->user_type === 'seller' || $this->user_type === 'admin';
+        return in_array($this->user_type, ['seller', 'merchant', 'farmer']);
+    }
+
+    /**
+     * Determine if the user is a system admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->user_type === 'admin';
     }
 
     public function getIsSellerAttribute(): bool

@@ -25,6 +25,7 @@ class StoreResource extends JsonResource
             'latitude' => $this->latitude ? (float) $this->latitude : null,
             'longitude' => $this->longitude ? (float) $this->longitude : null,
             'rating' => $this->avg_rating,  // محسوب من تقييمات المنتجات الفعلية
+            'reviews_count' => (int) ($this->reviews_count ?? 0),
             'logo' => $this->logo_url,
             'cover_image' => $this->cover_url,
             'products_count' => (int) ($this->products_count ?? 0),
