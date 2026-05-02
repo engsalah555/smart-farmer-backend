@@ -36,17 +36,21 @@ class StoresTable
                     ->label('النوع')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'seeds' => 'بذور',
-                        'tools' => 'أدوات',
-                        'fertilizers' => 'أسمدة',
-                        'all' => 'متنوع',
+                        'بذور' => 'بذور',
+                        'أسمدة' => 'أسمدة',
+                        'مبيدات' => 'مبيدات',
+                        'محاصيل' => 'محاصيل',
+                        'معدات' => 'معدات',
+                        'مشاتل' => 'مشاتل',
                         default => $state,
                     })
                     ->color(fn (string $state): string => match ($state) {
-                        'seeds' => 'success',
-                        'tools' => 'warning',
-                        'fertilizers' => 'info',
-                        'all' => 'primary',
+                        'بذور' => 'success',
+                        'أسمدة' => 'info',
+                        'مبيدات' => 'danger',
+                        'محاصيل' => 'warning',
+                        'معدات' => 'primary',
+                        'مشاتل' => 'success',
                         default => 'gray',
                     }),
 
@@ -81,10 +85,12 @@ class StoresTable
                 SelectFilter::make('store_type')
                     ->label('النوع')
                     ->options([
-                        'seeds' => 'بذور',
-                        'tools' => 'أدوات',
-                        'fertilizers' => 'أسمدة',
-                        'all' => 'متنوع',
+                        'بذور' => 'بذور',
+                        'أسمدة' => 'أسمدة',
+                        'مبيدات' => 'مبيدات',
+                        'محاصيل' => 'محاصيل',
+                        'معدات' => 'معدات',
+                        'مشاتل' => 'مشاتل',
                     ]),
             ])
             ->recordActions([

@@ -58,8 +58,8 @@ class UsersTable
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'admin' => 'مدير نظام',
-                        'seller' => 'تاجر',
-                        'user' => 'مزارع',
+                        'seller' => 'بائع (مزارع/تاجر)',
+                        'user' => 'مشتري (عادي)',
                         default => $state,
                     }),
 
@@ -73,8 +73,8 @@ class UsersTable
                     ->label('نوع المستخدم')
                     ->options([
                         'admin' => 'مدير نظام',
-                        'seller' => 'تاجر',
-                        'user' => 'مزارع',
+                        'seller' => 'بائع (مزارع/تاجر)',
+                        'user' => 'مشتري (عادي)',
                     ]),
             ])
             ->actions([

@@ -18,6 +18,7 @@ class UpdateProfileRequest extends FormRequest
             'phone' => 'nullable|string',
             'current_password' => 'required_with:new_password|string',
             'new_password' => 'nullable|string|min:6',
+            'custom_title' => 'nullable|string|max:255',
             'profile_image' => 'nullable|image|max:5120',
         ];
     }

@@ -19,10 +19,10 @@ class RegisterRequest extends FormRequest
             // ✅ كلمة مرور مبسطة للتسهيل على المستخدمين
             'password' => 'required|string|min:6',
             'user_type' => 'nullable|string|in:user,seller,admin',
-            'store_name' => 'nullable|string|max:255',
-            'store_type' => 'nullable|string|max:100',
+            'store_name' => 'required_if:user_type,seller|nullable|string|max:255',
+            'store_type' => 'required_if:user_type,seller|nullable|string|max:100',
             // ✅ السماح بالأرقام والمسافات والرموز الأساسية
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'required_if:user_type,seller|nullable|string|max:20',
         ];
     }
 

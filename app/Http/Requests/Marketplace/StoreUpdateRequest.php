@@ -19,6 +19,7 @@ class StoreUpdateRequest extends FormRequest
             'address' => 'nullable|string',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'store_type' => 'sometimes|required|string|in:بذور,أسمدة,مبيدات,محاصيل,معدات,مشاتل',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
         ];
     }

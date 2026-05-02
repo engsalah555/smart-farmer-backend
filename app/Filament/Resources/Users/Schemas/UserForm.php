@@ -40,11 +40,11 @@ class UserForm
                                     ->maxLength(255),
 
                                 Select::make('user_type')
-                                    ->label('نوع المستخدم')
+                                    ->label('نوع المستخدم (الصلاحية)')
                                     ->options([
-                                        'user' => 'مزارع',
-                                        'seller' => 'تاجر',
-                                        'admin' => 'مدير نظام',
+                                        'user' => '👤 مشتري (مستخدم عادي)',
+                                        'seller' => '🚜 بائع (مزارع أو تاجر)',
+                                        'admin' => '🛠️ مدير نظام',
                                     ])
                                     ->required(),
                             ]),
@@ -59,8 +59,9 @@ class UserForm
                                     ->required(fn (string $context): bool => $context === 'create'),
 
                                 TextInput::make('custom_title')
-                                    ->label('اللقب / الرسالة الترحيبية')
-                                    ->placeholder('مثال: المزارع النشط')
+                                    ->label('اللقب / الرتبة المخصصة')
+                                    ->placeholder('مثال: خبير زراعي، مزارع منتج، وكيل معتمد')
+                                    ->helperText('يظهر هذا اللقب أسفل اسم المستخدم في الشاشة الرئيسية (مثل: المشتل المعتمد)')
                                     ->maxLength(255),
                             ]),
 

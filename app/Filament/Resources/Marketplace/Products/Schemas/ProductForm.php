@@ -48,9 +48,11 @@ class ProductForm
                                     ->label('الفئة العامة')
                                     ->options([
                                         'seeds' => 'بذور',
-                                        'tools' => 'أدوات',
                                         'fertilizers' => 'أسمدة',
                                         'pesticides' => 'مبيدات',
+                                        'crops' => 'محاصيل',
+                                        'tools' => 'معدات',
+                                        'nurseries' => 'مشاتل',
                                         'other' => 'أخرى',
                                     ])
                                     ->required(),

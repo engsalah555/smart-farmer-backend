@@ -26,7 +26,7 @@ class AuthService
         if (isset($data['store_type']) || ($data['user_type'] ?? '') === 'seller') {
             $user->store()->create([
                 'store_name' => $data['store_name'] ?? ($user->name.' Store'),
-                'store_type' => $data['store_type'] ?? 'general',
+                'store_type' => $data['store_type'] ?? 'محاصيل',
             ]);
         }
 
@@ -46,6 +46,15 @@ class AuthService
             ]);
         }
 
+        // ✅ التحقق من نوع الحساب عند تسجيل الدخول
+        if (isset($data['user_type'])) {
+            if ($data['user_type'] === 'seller' && ! $user->isSeller()) {
+                throw ValidationException::withMessages([
+                    'email' => ['هذا الحساب غير مسجل كبائع. يرجى تسجيل الدخول كمشتري.'],
+                ]);
+            }
+        }
+
         return $user;
     }
 
@@ -54,7 +63,7 @@ class AuthService
      */
     public function updateProfile($user, array $data, $profileImage = null)
     {
-        $updateData = collect($data)->only(['name', 'phone'])->toArray();
+        $updateData = collect($data)->only(['name', 'phone', 'custom_title'])->toArray();
 
         if (isset($data['new_password'])) {
             if (! Hash::check($data['current_password'], $user->password)) {

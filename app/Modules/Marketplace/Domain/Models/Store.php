@@ -47,6 +47,7 @@ class Store extends Model implements HasMedia
         'longitude',
         'status',
         'cover',
+        'logo',
     ];
 
     protected $casts = [
@@ -176,14 +177,22 @@ class Store extends Model implements HasMedia
      */
     public function getLogoUrlAttribute(): ?string
     {
-        // تم توحيد الهوية بين البائع والمتجر، لذا نستخدم صورة الملف الشخصي للمستخدم
+        // 1. Check if there is a logo specifically for the store
+        $logo = $this->attributes['logo'] ?? null;
+        if ($logo) {
+            if (filter_var($logo, FILTER_VALIDATE_URL)) {
+                return $logo;
+            }
+            $path = ltrim($logo, '/');
+            return str_starts_with($path, 'storage/') ? url($path) : url('storage/'.$path);
+        }
+
+        // 2. Fallback to user's profile photo (unified identity)
         if ($this->relationLoaded('user') && $this->user) {
             return $this->user->getProfilePhotoUrlAttribute();
         }
 
-        // إذا لم يكن اليوزر محملاً (Fallback)
         $user = User::find($this->user_id);
-
         return $user ? $user->getProfilePhotoUrlAttribute() : null;
     }
 
