@@ -37,6 +37,7 @@ class StandardizeMarketplaceCategories extends Command
             'معدات زراعية' => 'معدات',
             'بذور وشتلات' => 'بذور',
             'مبيدات زراعية' => 'مبيدات',
+            'أدوات' => 'معدات',
         ];
 
         DB::beginTransaction();
@@ -51,7 +52,7 @@ class StandardizeMarketplaceCategories extends Command
             }
 
             // Cleanup categories table: Remove names that don't match the standard or are duplicates
-            $standardNames = ['بذور', 'أسمدة', 'مبيدات', 'محاصيل', 'معدات', 'مشاتل'];
+            $standardNames = ['بذور', 'أسمدة', 'مبيدات', 'محاصيل', 'معدات', 'مشاتل', 'نحل وعسل', 'مواشي وأعلاف', 'طاقة شمسية', 'خدمات زراعية', 'متنوع'];
             
             $redundantCategories = Category::where('type', 'marketplace')
                 ->whereNotIn('name', $standardNames)

@@ -19,6 +19,11 @@ class MarketplaceCategorySeeder extends Seeder
             ['name' => 'محاصيل', 'icon' => 'grass', 'type' => 'marketplace', 'description' => 'محاصيل زراعية طازجة'],
             ['name' => 'معدات', 'icon' => 'tools', 'type' => 'marketplace', 'description' => 'أدوات ومعدات زراعية'],
             ['name' => 'مشاتل', 'icon' => 'landscape', 'type' => 'marketplace', 'description' => 'شتلات ونباتات زينة'],
+            ['name' => 'نحل وعسل', 'icon' => 'hive', 'type' => 'marketplace', 'description' => 'تربية النحل ومنتجات العسل'],
+            ['name' => 'مواشي وأعلاف', 'icon' => 'pets', 'type' => 'marketplace', 'description' => 'تربية المواشي والأعلاف المركزة'],
+            ['name' => 'طاقة شمسية', 'icon' => 'wb_sunny', 'type' => 'marketplace', 'description' => 'منظومات الطاقة الشمسية والري'],
+            ['name' => 'خدمات زراعية', 'icon' => 'engineering', 'type' => 'marketplace', 'description' => 'استشارات وخدمات زراعية تخصصية'],
+            ['name' => 'متنوع', 'icon' => 'category', 'type' => 'marketplace', 'description' => 'منتجات زراعية متنوعة'],
         ];
 
         foreach ($categories as $cat) {
