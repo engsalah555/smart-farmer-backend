@@ -33,7 +33,11 @@ class PlantForm
 
                                 Select::make('category_id')
                                     ->label('التصنيف')
-                                    ->relationship('category', 'name')
+                                    ->relationship(
+                                        name: 'category',
+                                        titleAttribute: 'name',
+                                        modifyQueryUsing: fn (\Illuminate\Database\Eloquent\Builder $query) => $query->where('type', 'crop'),
+                                    )
                                     ->required()
                                     ->searchable()
                                     ->preload(),
@@ -54,11 +58,6 @@ class PlantForm
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                TextInput::make('difficulty_level')
-                                    ->label('مستوى الصعوبة')
-                                    ->placeholder('مثال: سهل، متوسط')
-                                    ->maxLength(255),
-
                                 TextInput::make('planting_season')
                                     ->label('موسم الزراعة')
                                     ->maxLength(255),

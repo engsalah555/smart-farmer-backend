@@ -46,15 +46,7 @@ class ProductForm
 
                                 Select::make('category')
                                     ->label('الفئة العامة')
-                                    ->options([
-                                        'seeds' => 'بذور',
-                                        'fertilizers' => 'أسمدة',
-                                        'pesticides' => 'مبيدات',
-                                        'crops' => 'محاصيل',
-                                        'tools' => 'معدات',
-                                        'nurseries' => 'مشاتل',
-                                        'other' => 'أخرى',
-                                    ])
+                                    ->options(\App\Models\Category::marketplace()->pluck('name', 'name'))
                                     ->required(),
 
                                 Toggle::make('is_featured')

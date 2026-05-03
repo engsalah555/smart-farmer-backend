@@ -5,7 +5,7 @@ namespace App\Modules\PlantGuide\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\PlantResource;
-use App\Modules\PlantGuide\Domain\Models\Category;
+use App\Models\Category;
 use App\Modules\PlantGuide\Domain\Models\Plant;
 use App\Traits\ApiResponder;
 use Illuminate\Http\Request;

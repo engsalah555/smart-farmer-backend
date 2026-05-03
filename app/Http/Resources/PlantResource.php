@@ -34,7 +34,6 @@ class PlantResource extends JsonResource
             'uses' => $this->uses,
             'pests_and_diseases' => $this->pests_and_diseases,
             'harvesting_and_storage' => $this->harvesting_and_storage,
-            'difficulty_level' => $this->difficulty_level,
             'category' => new CategoryResource($this->whenLoaded('category')),
             'care_guide' => new CareGuideResource($this->whenLoaded('careGuide')),
             'planting_season' => $this->planting_season,
