@@ -88,6 +88,11 @@ class StatsOverview extends BaseWidget
                 ->description('بانتظار المراجعة')
                 ->descriptionIcon('heroicon-m-shopping-bag')
                 ->color('danger'),
+
+            Stat::make('طلبات التوثيق', \App\Models\VerificationRequest::where('status', 'pending')->count())
+                ->description('بانتظار التوثيق')
+                ->descriptionIcon('heroicon-m-shield-check')
+                ->color('warning'),
         ];
     }
 }

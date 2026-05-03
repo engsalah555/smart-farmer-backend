@@ -5,13 +5,13 @@ namespace App\Filament\Resources\Marketplace\Schemas;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 
 class MarketplaceCategoryForm
 {
-    public static function configure(Form $form): Form
+    public static function configure(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Section::make('معلومات التصنيف')
                     ->description('أدخل تفاصيل تصنيف المتجر هنا')

@@ -14,30 +14,34 @@ class MetadataController extends Controller
      */
     public function index()
     {
-        return $this->success([
-            'marketplace' => [
-                'categories' => Category::marketplace()->get()->map(fn ($cat) => [
-                    'id' => $cat->name,
-                    'label' => $cat->name,
-                    'icon' => $cat->icon ?? 'default',
-                ]),
-                'units' => DB::table('units')->pluck('name'),
-                'payment_methods' => PaymentMethod::where('is_active', true)
-                    ->orderBy('id')
-                    ->get()
-                    ->map(fn ($pm) => [
-                        'id' => $pm->identifier,
-                        'label' => $pm->label,
-                        'icon' => $pm->icon,
+        $metadata = \Illuminate\Support\Facades\Cache::remember('app_metadata', 3600, function () {
+            return [
+                'marketplace' => [
+                    'categories' => Category::marketplace()->get()->map(fn ($cat) => [
+                        'id' => $cat->name,
+                        'label' => $cat->name,
+                        'icon' => $cat->icon ?? 'default',
                     ]),
-            ],
-            'app_info' => [
-                'version' => config('app.version', '2.0.0'),
-                'contact_email' => 'support@smartfarm.sa',
-                'terms_url' => 'https://smartfarm.sa/terms',
-                'privacy_url' => 'https://smartfarm.sa/privacy',
-            ],
-        ]);
+                    'units' => DB::table('units')->pluck('name'),
+                    'payment_methods' => PaymentMethod::where('is_active', true)
+                        ->orderBy('id')
+                        ->get()
+                        ->map(fn ($pm) => [
+                            'id' => $pm->identifier,
+                            'label' => $pm->label,
+                            'icon' => $pm->icon,
+                        ]),
+                ],
+                'app_info' => [
+                    'version' => config('app.version', '2.0.0'),
+                    'contact_email' => 'support@smartfarm.sa',
+                    'terms_url' => 'https://smartfarm.sa/terms',
+                    'privacy_url' => 'https://smartfarm.sa/privacy',
+                ],
+            ];
+        });
+
+        return $this->success($metadata);
     }
 
     /**

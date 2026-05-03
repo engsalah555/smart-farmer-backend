@@ -9,7 +9,7 @@ use App\Filament\Resources\Marketplace\Schemas\MarketplaceCategoryForm;
 use App\Filament\Resources\Marketplace\Tables\MarketplaceCategoriesTable;
 use App\Models\Category;
 use Filament\Resources\Resource;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,7 +18,7 @@ class MarketplaceCategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -47,9 +47,9 @@ class MarketplaceCategoryResource extends Resource
         return parent::getEloquentQuery()->marketplace();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return MarketplaceCategoryForm::configure($form);
+        return MarketplaceCategoryForm::configure($schema);
     }
 
     public static function table(Table $table): Table

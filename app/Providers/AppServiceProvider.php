@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
 use App\Models\User;
+use App\Observers\CategoryObserver;
 use App\Modules\Marketplace\Domain\Models\Order;
 use App\Modules\Marketplace\Domain\Models\Product;
 use App\Modules\Marketplace\Domain\Models\Store;
@@ -68,5 +70,8 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('auth', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });
+
+        // ─── المراقبون (Observers) ───
+        Category::observe(CategoryObserver::class);
     }
 }
