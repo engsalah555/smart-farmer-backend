@@ -24,9 +24,13 @@ class OrdersChart extends ChartWidget
 
     protected function getData(): array
     {
+        $monthQuery = DB::connection()->getDriverName() === 'sqlite'
+            ? "strftime('%m', created_at)"
+            : "DATE_FORMAT(created_at, '%m')";
+
         $data = Order::select(
             DB::raw('sum(total_price) as total'),
-            DB::raw("DATE_FORMAT(created_at, '%m') as month")
+            DB::raw("{$monthQuery} as month")
         )
             ->where('payment_status', 'paid')
             ->whereYear('created_at', Carbon::now()->year)
