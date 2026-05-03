@@ -16,13 +16,22 @@ class PlantCategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static $navigationIcon = 'heroicon-o-tag';
     
-    protected static ?string $navigationGroup = 'دليل المحاصيل';
-    
-    protected static ?string $modelLabel = 'تصنيف محاصيل';
-    
-    protected static ?string $pluralModelLabel = 'تصنيفات المحاصيل';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'دليل المحاصيل';
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'تصنيف محاصيل';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'تصنيفات المحاصيل';
+    }
 
     public static function form(Form $form): Form
     {
