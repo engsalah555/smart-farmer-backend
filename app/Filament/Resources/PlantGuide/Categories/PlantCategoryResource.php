@@ -6,7 +6,7 @@ use App\Filament\Resources\PlantGuide\Categories\Pages;
 use App\Filament\Resources\PlantGuide\Categories\Schemas\PlantCategoryForm;
 use App\Filament\Resources\PlantGuide\Categories\Tables\PlantCategoryTable;
 use App\Models\Category;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -36,9 +36,9 @@ class PlantCategoryResource extends Resource
         return 'تصنيفات المحاصيل';
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return PlantCategoryForm::configure($form->getSchema());
+        return PlantCategoryForm::configure($schema);
     }
 
     public static function table(Table $table): Table
