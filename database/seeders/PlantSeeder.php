@@ -18,7 +18,12 @@ class PlantSeeder extends Seeder
         CareGuide::truncate();
         Plant::truncate();
 
-        $json = file_get_contents(database_path('seeders/yemeni_plants.json'));
+        $jsonPath = database_path('seeders/yemeni_plants.json');
+        if (!file_exists($jsonPath)) {
+            return;
+        }
+
+        $json = file_get_contents($jsonPath);
         $data = json_decode($json, true);
         $cropCategoryNames = collect($data['categories'])->pluck('name')->toArray();
 
@@ -28,12 +33,13 @@ class PlantSeeder extends Seeder
 
         $categoryMap = [];
         foreach ($data['categories'] as $catData) {
-            $categoryMap[$catData['name']] = Category::create([
-                'name' => $catData['name'],
-                'type' => 'crop',
-                'description' => $catData['description'],
-                'icon' => $this->getCategoryIcon($catData['name']),
-            ]);
+            $categoryMap[$catData['name']] = Category::updateOrCreate(
+                ['name' => $catData['name'], 'type' => 'crop'],
+                [
+                    'description' => $catData['description'],
+                    'icon' => $this->getCategoryIcon($catData['name']),
+                ]
+            );
         }
 
         foreach ($data['plants'] as $p) {

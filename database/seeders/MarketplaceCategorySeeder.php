@@ -13,12 +13,13 @@ class MarketplaceCategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'بذور', 'icon' => 'eco', 'type' => 'marketplace', 'description' => 'بذور نباتات ومحاصيل متنوعة'],
-            ['name' => 'أسمدة', 'icon' => 'opacity', 'type' => 'marketplace', 'description' => 'أسمدة تربة عضوية وكيميائية'],
-            ['name' => 'مبيدات', 'icon' => 'bug_report', 'type' => 'marketplace', 'description' => 'مبيدات حشرية وفطرية'],
-            ['name' => 'محاصيل', 'icon' => 'grass', 'type' => 'marketplace', 'description' => 'محاصيل زراعية طازجة'],
-            ['name' => 'معدات', 'icon' => 'tools', 'type' => 'marketplace', 'description' => 'أدوات ومعدات زراعية'],
-            ['name' => 'مشاتل', 'icon' => 'landscape', 'type' => 'marketplace', 'description' => 'شتلات ونباتات زينة'],
+            ['name' => 'بذور', 'icon' => 'eco', 'type' => 'marketplace', 'description' => 'بذور نباتات ومحاصيل متنوعة وتقاوي'],
+            ['name' => 'أسمدة', 'icon' => 'opacity', 'type' => 'marketplace', 'description' => 'أسمدة تربة عضوية وكيميائية ومحسنات'],
+            ['name' => 'مبيدات', 'icon' => 'bug_report', 'type' => 'marketplace', 'description' => 'مبيدات حشرية وفطرية ووقائية'],
+            ['name' => 'معدات وأدوات', 'icon' => 'tools', 'type' => 'marketplace', 'description' => 'أدوات ومعدات زراعية يدوية وآلية'],
+            ['name' => 'أنظمة ري وطاقة', 'icon' => 'water_drop', 'type' => 'marketplace', 'description' => 'مواسير، غطاسات، ومنظومات طاقة شمسية'],
+            ['name' => 'مشاتل', 'icon' => 'landscape', 'type' => 'marketplace', 'description' => 'شتلات، أشجار مثمرة، ونباتات زينة'],
+            ['name' => 'منتجات زراعية', 'icon' => 'shopping_basket', 'type' => 'marketplace', 'description' => 'محاصيل ومنتجات زراعية طازجة'],
         ];
 
         foreach ($categories as $cat) {
