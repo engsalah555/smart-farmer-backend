@@ -89,7 +89,7 @@ class StatsOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-shopping-bag')
                 ->color('danger'),
 
-            Stat::make('طلبات التوثيق', \App\Models\VerificationRequest::where('status', 'pending')->count())
+            Stat::make('طلبات التوثيق', rescue(fn() => \App\Models\VerificationRequest::where('status', 'pending')->count(), 0))
                 ->description('بانتظار التوثيق')
                 ->descriptionIcon('heroicon-m-shield-check')
                 ->color('warning'),

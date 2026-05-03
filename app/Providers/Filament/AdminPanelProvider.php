@@ -64,6 +64,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(
+                'panels::body.end',
+                fn () => \Illuminate\Support\Facades\Blade::render('<style>.fi-footer { display: none !important; } a[href*="github.com"] { display: none !important; }</style>')
+            );
     }
 }
