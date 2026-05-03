@@ -16,7 +16,10 @@ class PlantCategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static $navigationIcon = 'heroicon-o-tag';
+    public static function getNavigationIcon(): string
+    {
+        return 'heroicon-o-tag';
+    }
     
     public static function getNavigationGroup(): ?string
     {
