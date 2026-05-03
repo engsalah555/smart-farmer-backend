@@ -36,8 +36,13 @@ return new class extends Migration
             $keepId = $ids->shift(); // Keep the first one
 
             // Update related tables
-            DB::table('products')->whereIn('category_id', $ids)->update(['category_id' => $keepId]);
-            DB::table('plants')->whereIn('category_id', $ids)->update(['category_id' => $keepId]);
+            if (Schema::hasColumn('products', 'category_id')) {
+                DB::table('products')->whereIn('category_id', $ids)->update(['category_id' => $keepId]);
+            }
+            
+            if (Schema::hasColumn('plants', 'category_id')) {
+                DB::table('plants')->whereIn('category_id', $ids)->update(['category_id' => $keepId]);
+            }
 
             // Delete duplicates
             DB::table('categories')->whereIn('id', $ids)->delete();
@@ -45,8 +50,6 @@ return new class extends Migration
 
         // 3. Add Unique Constraint
         Schema::table('categories', function (Blueprint $table) {
-            // First drop index if exists (just in case)
-            // $table->dropUnique(['name', 'type']); 
             $table->unique(['name', 'type']);
         });
     }
@@ -56,10 +59,19 @@ return new class extends Migration
         $oldCat = DB::table('categories')->where('name', $oldName)->where('type', 'marketplace')->first();
         $newCat = DB::table('categories')->where('name', $newName)->where('type', 'marketplace')->first();
 
+        // Always update products category string if it exists
+        if (Schema::hasColumn('products', 'category')) {
+            DB::table('products')->where('category', $oldName)->update(['category' => $newName]);
+        }
+
         if ($oldCat && $newCat) {
             // Merge products and plants
-            DB::table('products')->where('category_id', $oldCat->id)->update(['category_id' => $newCat->id]);
-            DB::table('plants')->where('category_id', $oldCat->id)->update(['category_id' => $newCat->id]);
+            if (Schema::hasColumn('products', 'category_id')) {
+                DB::table('products')->where('category_id', $oldCat->id)->update(['category_id' => $newCat->id]);
+            }
+            if (Schema::hasColumn('plants', 'category_id')) {
+                DB::table('plants')->where('category_id', $oldCat->id)->update(['category_id' => $newCat->id]);
+            }
             // Delete old
             DB::table('categories')->where('id', $oldCat->id)->delete();
         } elseif ($oldCat && !$newCat) {
