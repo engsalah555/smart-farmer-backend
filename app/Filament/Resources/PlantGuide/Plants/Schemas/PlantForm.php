@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PlantGuide\Plants\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -19,7 +20,7 @@ class PlantForm
                     ->description('تعريف النبات وأسماؤه')
                     ->icon('heroicon-o-identification')
                     ->schema([
-                        Grid::make(2)
+                        Grid::make(3)
                             ->schema([
                                 TextInput::make('common_name')
                                     ->label('الاسم الشائع')
@@ -29,10 +30,21 @@ class PlantForm
                                 TextInput::make('scientific_name')
                                     ->label('الاسم العلمي')
                                     ->maxLength(255),
+
+                                Select::make('category_id')
+                                    ->label('التصنيف')
+                                    ->relationship('category', 'name')
+                                    ->required()
+                                    ->searchable()
+                                    ->preload(),
                             ]),
 
+                        RichEditor::make('scientific_definition')
+                            ->label('التعريف العلمي')
+                            ->columnSpanFull(),
+
                         RichEditor::make('description')
-                            ->label('الوصف')
+                            ->label('الوصف العام')
                             ->columnSpanFull(),
                     ]),
 
@@ -40,7 +52,7 @@ class PlantForm
                     ->description('ظروف الزراعة والنمو المثالية')
                     ->icon('heroicon-o-sun')
                     ->schema([
-                        Grid::make(3)
+                        Grid::make(2)
                             ->schema([
                                 TextInput::make('difficulty_level')
                                     ->label('مستوى الصعوبة')
@@ -54,6 +66,10 @@ class PlantForm
                                 TextInput::make('water_needs')
                                     ->label('الاحتياجات المائية')
                                     ->maxLength(255),
+
+                                TextInput::make('harvest_time')
+                                    ->label('وقت الحصاد (مدة النمو)')
+                                    ->maxLength(255),
                             ]),
 
                         RichEditor::make('growth_guide')
@@ -62,6 +78,10 @@ class PlantForm
 
                         RichEditor::make('growing_conditions')
                             ->label('ظروف النمو (الضوء، الحرارة)')
+                            ->columnSpanFull(),
+
+                        RichEditor::make('soil_and_ph')
+                            ->label('التربة ودرجة الحموضة (PH)')
                             ->columnSpanFull(),
                     ]),
 
@@ -76,12 +96,24 @@ class PlantForm
                         RichEditor::make('uses')
                             ->label('الاستخدامات')
                             ->columnSpanFull(),
+
+                        RichEditor::make('pests_and_diseases')
+                            ->label('الآفات والأمراض')
+                            ->columnSpanFull(),
+
+                        RichEditor::make('harvesting_and_storage')
+                            ->label('الحصاد والتخزين')
+                            ->columnSpanFull(),
+
+                        TextInput::make('fertilizer_needs')
+                            ->label('الاحتياجات السمادية')
+                            ->maxLength(255),
                     ]),
 
                 Section::make('الصور والوسائط')
                     ->icon('heroicon-o-photo')
                     ->schema([
-                        FileUpload::make('image')
+                        FileUpload::make('image_url')
                             ->label('صورة النبات الرئيسية')
                             ->image()
                             ->disk('public')

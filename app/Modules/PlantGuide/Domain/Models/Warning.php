@@ -14,7 +14,7 @@ class Warning extends Model
         'message',
         'type', // e.g., 'weather', 'pest', 'general'
         'severity', // e.g., 'low', 'medium', 'high', 'critical'
-        'location', // e.g., 'كل المناطق', 'منطقة الرياض'
+        'location', // e.g., 'كل المناطق', 'منطقة صنعاء'
         'active', // boolean
         'expires_at', // datetime
     ];
