@@ -23,9 +23,6 @@ class IotController extends Controller
     {
         $user = Auth::user();
 
-        // ✅ Sync real-time data from Firebase
-        $this->iotService->syncFromFirebase($user);
-
         $status = $this->iotService->getStatus($user);
 
         return $this->success($status);
