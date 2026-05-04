@@ -18,16 +18,31 @@ class IotService
     }
 
     /**
+     * Get the master device for the user if they have IoT enabled.
+     */
+    protected function getMasterDevice($user)
+    {
+        if (!$user->is_iot_enabled) {
+            return null;
+        }
+
+        // Graduation project mode: All users share the same master device
+        return IotDevice::first();
+    }
+
+    /**
      * Get device status and logs for the current user.
      */
     public function getStatus($user)
     {
-        $device = IotDevice::where('user_id', $user->id)->first();
+        $device = $this->getMasterDevice($user);
 
         if (! $device) {
             return [
                 'has_device' => false,
-                'message' => 'لم يتم العثور على جهاز مرتبط بهذا الحساب. يمكنك طلب تفعيل الخدمة الآن.',
+                'message' => $user->is_iot_enabled 
+                    ? 'لم يتم إضافة جهاز مركزي للنظام بعد. يرجى إضافته من لوحة التحكم.'
+                    : 'هذه الخدمة غير مفعلة لحسابك. يرجى التواصل مع الإدارة.',
             ];
         }
 
@@ -48,7 +63,8 @@ class IotService
      */
     public function toggleIrrigation($user, bool $status)
     {
-        $device = IotDevice::where('user_id', $user->id)->firstOrFail();
+        $device = $this->getMasterDevice($user);
+        if (!$device) throw new \Exception('لا تملك صلاحية للوصول إلى الجهاز.');
 
         if ($device->status !== 'active') {
             throw new \Exception('الجهاز غير نشط حالياً. يرجى انتظار موافقة الإدارة.');
@@ -80,7 +96,8 @@ class IotService
      */
     public function updateAutoIrrigation($user, bool $auto, int $threshold = 30)
     {
-        $device = IotDevice::where('user_id', $user->id)->firstOrFail();
+        $device = $this->getMasterDevice($user);
+        if (!$device) throw new \Exception('لا تملك صلاحية للوصول إلى الجهاز.');
 
         if ($device->status !== 'active') {
             throw new \Exception('الجهاز غير نشط حالياً. يرجى انتظار موافقة الإدارة.');
@@ -104,7 +121,8 @@ class IotService
      */
     public function addSchedule($user, array $data)
     {
-        $device = IotDevice::where('user_id', $user->id)->firstOrFail();
+        $device = $this->getMasterDevice($user);
+        if (!$device) throw new \Exception('لا تملك صلاحية للوصول إلى الجهاز.');
 
         if ($device->status !== 'active') {
             throw new \Exception('الجهاز غير نشط حالياً. يرجى انتظار موافقة الإدارة.');
@@ -122,7 +140,8 @@ class IotService
      */
     public function deleteSchedule($user, $scheduleId)
     {
-        $device = IotDevice::where('user_id', $user->id)->firstOrFail();
+        $device = $this->getMasterDevice($user);
+        if (!$device) throw new \Exception('لا تملك صلاحية للوصول إلى الجهاز.');
 
         if ($device->status !== 'active') {
             throw new \Exception('الجهاز غير نشط حالياً. يرجى انتظار موافقة الإدارة.');
