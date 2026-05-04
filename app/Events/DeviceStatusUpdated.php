@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\IotDevice;
+use App\Modules\Iot\Domain\Models\IotDevice;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

@@ -26,7 +26,7 @@ class AuthService
         if (isset($data['store_type']) || ($data['user_type'] ?? '') === 'seller') {
             $user->store()->create([
                 'store_name' => $data['store_name'] ?? ($user->name.' Store'),
-                'store_type' => $data['store_type'] ?? 'محاصيل',
+                'store_type' => $data['store_type'] ?? 'منتجات زراعية',
             ]);
         }
 

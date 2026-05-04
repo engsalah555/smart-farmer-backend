@@ -17,11 +17,23 @@ class MetadataController extends Controller
         $metadata = \Illuminate\Support\Facades\Cache::remember('app_metadata', 3600, function () {
             return [
                 'marketplace' => [
-                    'categories' => Category::marketplace()->get()->map(fn ($cat) => [
-                        'id' => $cat->name,
-                        'label' => $cat->name,
-                        'icon' => $cat->icon ?? 'default',
-                    ]),
+                'categories' => Category::marketplace()->get()->map(function ($cat) {
+                        // خريطة لتحويل الاسم العربي إلى ID إنجليزي موحد
+                        $slugMap = [
+                            'بذور زراعية'     => 'seeds',
+                            'أسمدة'           => 'fertilizers',
+                            'مبيدات زراعية'   => 'pesticides',
+                            'أنظمة ري وطاقة'  => 'irrigation',
+                            'معدات وأدوات'    => 'tools',
+                            'مشاتل'           => 'nurseries',
+                            'منتجات زراعية'   => 'products',
+                        ];
+                        return [
+                            'id'    => $slugMap[$cat->name] ?? \Illuminate\Support\Str::slug($cat->name),
+                            'label' => $cat->name,
+                            'icon'  => $cat->icon ?? 'default',
+                        ];
+                    }),
                     'units' => DB::table('units')->pluck('name'),
                     'payment_methods' => PaymentMethod::where('is_active', true)
                         ->orderBy('id')

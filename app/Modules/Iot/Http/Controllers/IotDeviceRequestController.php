@@ -3,7 +3,7 @@
 namespace App\Modules\Iot\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\IotDeviceRequest;
+use App\Modules\Iot\Domain\Models\IotDeviceRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

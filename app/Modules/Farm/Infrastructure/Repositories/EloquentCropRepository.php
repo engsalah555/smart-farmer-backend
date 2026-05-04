@@ -11,12 +11,13 @@ class EloquentCropRepository implements CropRepositoryInterface
 {
     public function getByUser(User $user): Collection
     {
-        return $user->crops()->latest()->get();
+        return $user->crops()->with(['plant.careGuide'])->latest()->get();
     }
 
     public function createForUser(User $user, array $data): Crop
     {
         return $user->crops()->create([
+            'plant_id' => $data['plant_id'] ?? null,
             'name' => $data['name'],
             'crop_type' => $data['crop_type'],
             'plantation_date' => $data['plantation_date'] ?? now(),

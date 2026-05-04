@@ -9,6 +9,7 @@ class Crop extends Model
 {
     protected $fillable = [
         'user_id',
+        'plant_id',
         'name',
         'crop_type',
         'plantation_date',
@@ -27,5 +28,10 @@ class Crop extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function plant()
+    {
+        return $this->belongsTo(Plant::class);
     }
 }

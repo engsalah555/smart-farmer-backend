@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Product;
-use App\Models\Store;
-use App\Models\StoreCatalog;
+use App\Modules\Marketplace\Domain\Models\Product;
+use App\Modules\Marketplace\Domain\Models\Store;
+use App\Modules\Marketplace\Domain\Models\StoreCatalog;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -21,28 +21,34 @@ class MigrateOldMedia extends Command
 
         // 1. Migrate Stores
         $this->info('Migrating Stores...');
-        Store::all()->each(function ($store) {
-            if (Schema::hasColumn('stores', 'logo') && $store->logo && $store->getMedia('logo')->isEmpty()) {
-                $this->addMediaFromUrl($store, $store->logo, 'logo');
-            }
-            if (Schema::hasColumn('stores', 'cover_image') && $store->cover_image && $store->getMedia('cover')->isEmpty()) {
-                $this->addMediaFromUrl($store, $store->cover_image, 'cover');
+        Store::chunkById(200, function ($stores) {
+            foreach ($stores as $store) {
+                if (Schema::hasColumn('stores', 'logo') && $store->logo && $store->getMedia('logo')->isEmpty()) {
+                    $this->addMediaFromUrl($store, $store->logo, 'logo');
+                }
+                if (Schema::hasColumn('stores', 'cover_image') && $store->cover_image && $store->getMedia('cover')->isEmpty()) {
+                    $this->addMediaFromUrl($store, $store->cover_image, 'cover');
+                }
             }
         });
 
         // 2. Migrate Catalogs
         $this->info('Migrating Catalogs...');
-        StoreCatalog::all()->each(function ($catalog) {
-            if (Schema::hasColumn('store_catalogs', 'image_url') && $catalog->image_url && $catalog->getMedia('catalog_image')->isEmpty()) {
-                $this->addMediaFromUrl($catalog, $catalog->image_url, 'catalog_image');
+        StoreCatalog::chunkById(200, function ($catalogs) {
+            foreach ($catalogs as $catalog) {
+                if (Schema::hasColumn('store_catalogs', 'image_url') && $catalog->image_url && $catalog->getMedia('catalog_image')->isEmpty()) {
+                    $this->addMediaFromUrl($catalog, $catalog->image_url, 'catalog_image');
+                }
             }
         });
 
         // 3. Migrate Products
         $this->info('Migrating Products...');
-        Product::all()->each(function ($product) {
-            if (Schema::hasColumn('products', 'image_url') && $product->image_url && $product->getMedia('main_image')->isEmpty()) {
-                $this->addMediaFromUrl($product, $product->image_url, 'main_image');
+        Product::chunkById(200, function ($products) {
+            foreach ($products as $product) {
+                if (Schema::hasColumn('products', 'image_url') && $product->image_url && $product->getMedia('main_image')->isEmpty()) {
+                    $this->addMediaFromUrl($product, $product->image_url, 'main_image');
+                }
             }
         });
 

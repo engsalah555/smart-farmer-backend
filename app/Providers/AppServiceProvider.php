@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // ─── أمان: منع Lazy Loading في بيئة التطوير لكشف N+1 مبكراً ───
-        // Model::preventLazyLoading(app()->isLocal());
+        Model::preventLazyLoading(app()->isLocal());
 
         // ─── حماية: منع التعديل غير الصريح على البيانات ───
         Model::preventSilentlyDiscardingAttributes(app()->isLocal());

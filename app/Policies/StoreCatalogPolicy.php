@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\StoreCatalog;
+use App\Modules\Marketplace\Domain\Models\StoreCatalog;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 

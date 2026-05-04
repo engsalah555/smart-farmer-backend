@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\IotDevice;
-use App\Models\Post;
-use App\Models\PostReport;
-use App\Models\Product;
-use App\Models\Store;
 use App\Models\User;
+use App\Modules\Community\Domain\Models\Post;
+use App\Modules\Community\Domain\Models\PostReport;
+use App\Modules\Iot\Domain\Models\IotDevice;
+use App\Modules\Marketplace\Domain\Models\Product;
+use App\Modules\Marketplace\Domain\Models\Store;
 use App\Traits\ApiResponder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
@@ -25,12 +26,16 @@ class AdminController extends Controller
      */
     public function getStats(): JsonResponse
     {
-        return $this->success([
-            'users' => User::count(),
-            'stores' => Store::count(),
-            'products' => Product::count(),
-            'posts' => Post::count(),
-        ]);
+        $stats = Cache::remember('admin_stats', 300, function () {
+            return [
+                'users'    => User::count(),
+                'stores'   => Store::count(),
+                'products' => Product::count(),
+                'posts'    => Post::count(),
+            ];
+        });
+
+        return $this->success($stats);
     }
 
     /**

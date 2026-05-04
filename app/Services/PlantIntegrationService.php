@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\CareGuide;
+use App\Modules\PlantGuide\Domain\Models\CareGuide;
 use App\Models\Category;
-use App\Models\Plant;
+use App\Modules\PlantGuide\Domain\Models\Plant;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 

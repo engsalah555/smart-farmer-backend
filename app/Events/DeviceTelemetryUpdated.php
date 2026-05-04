@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\IotDevice;
+use App\Modules\Iot\Domain\Models\IotDevice;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;

@@ -21,23 +21,34 @@ class StandardizeMarketplaceCategories extends Command
      *
      * @var string
      */
-    protected $description = 'Standardize marketplace categories in stores table and cleanup category names';
+    protected $description = 'Standardize marketplace categories in stores table and cleanup category names to professional list';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $this->info('Starting categorization standardization...');
+        $this->info('Starting categorization standardization (Professional Update)...');
 
-        // Mapping: Old Name => New Standard Name
+        // Mapping: All legacy variations => New Professional Standard Names
         $mapping = [
             'اسمده' => 'أسمدة',
+            'أسمدة زراعية' => 'أسمدة',
+            'أسمدة ومخصبات' => 'أسمدة',
             'المشاتل' => 'مشاتل',
-            'معدات زراعية' => 'معدات',
-            'بذور وشتلات' => 'بذور',
-            'مبيدات زراعية' => 'مبيدات',
-            'أدوات' => 'معدات',
+            'مشاتل ونباتات' => 'مشاتل',
+            'معدات زراعية' => 'معدات وأدوات',
+            'أدوات' => 'معدات وأدوات',
+            'معدات' => 'معدات وأدوات',
+            'بذور وشتلات' => 'بذور زراعية',
+            'بذور' => 'بذور زراعية',
+            'بذور وتقاوي' => 'بذور زراعية',
+            'مبيدات' => 'مبيدات زراعية',
+            'مبيدات وحماية' => 'مبيدات زراعية',
+            'محاصيل' => 'منتجات زراعية',
+            'ري' => 'أنظمة ري وطاقة',
+            'طاقة' => 'أنظمة ري وطاقة',
+            'أنظمة ري' => 'أنظمة ري وطاقة',
         ];
 
         DB::beginTransaction();
@@ -49,11 +60,24 @@ class StandardizeMarketplaceCategories extends Command
                     $this->line("Updating $count stores from '$old' to '$new'...");
                     Store::where('store_type', $old)->update(['store_type' => $new]);
                 }
+                
+                // Also update products if they have a category field (if applicable)
+                // Note: Products usually use the category name directly if it was dirty
+                DB::table('products')->where('category', $old)->update(['category' => $new]);
             }
 
-            // Cleanup categories table: Remove names that don't match the standard or are duplicates
-            $standardNames = ['بذور', 'أسمدة', 'مبيدات', 'محاصيل', 'معدات', 'مشاتل'];
+            // Standard professional names
+            $standardNames = [
+                'بذور زراعية', 
+                'أسمدة', 
+                'مبيدات زراعية', 
+                'أنظمة ري وطاقة',
+                'معدات وأدوات', 
+                'مشاتل', 
+                'منتجات زراعية'
+            ];
             
+            // Remove categories that are not in the standard list
             $redundantCategories = Category::where('type', 'marketplace')
                 ->whereNotIn('name', $standardNames)
                 ->get();
@@ -67,7 +91,7 @@ class StandardizeMarketplaceCategories extends Command
             $this->info('Standardization completed successfully.');
             
             $this->call('db:seed', ['--class' => 'MarketplaceCategorySeeder']);
-            $this->info('MarketplaceCategorySeeder re-run to ensure all standard categories exist.');
+            $this->info('MarketplaceCategorySeeder re-run to ensure all standard categories exist with correct icons.');
 
         } catch (\Exception $e) {
             DB::rollBack();

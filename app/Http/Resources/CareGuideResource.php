@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\CareGuide;
+use App\Modules\PlantGuide\Domain\Models\CareGuide;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

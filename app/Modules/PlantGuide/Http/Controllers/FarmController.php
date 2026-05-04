@@ -23,13 +23,14 @@ class FarmController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'crop_type' => 'required|string',
+            'plant_id' => 'nullable|exists:plants,id',
         ]);
 
         try {
             // تمرير حقول محددة فقط — يمنع Mass Assignment
             $crop = $this->cropService->addCrop(
                 $request->user(),
-                $request->only(['name', 'crop_type'])
+                $request->only(['name', 'crop_type', 'plant_id'])
             );
 
             return $this->success($crop, 'تمت إضافة المحصول بنجاح', 201);

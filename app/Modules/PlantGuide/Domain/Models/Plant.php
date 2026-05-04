@@ -48,6 +48,11 @@ class Plant extends Model implements HasMedia
         return $this->hasOne(CareGuide::class);
     }
 
+    public function crops()
+    {
+        return $this->hasMany(Crop::class);
+    }
+
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Crop;
+use App\Modules\PlantGuide\Domain\Models\Crop;
 use App\Models\User;
 
 class FarmService

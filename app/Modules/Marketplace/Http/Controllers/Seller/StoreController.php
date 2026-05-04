@@ -43,7 +43,7 @@ class StoreController extends Controller
 
         if (! $store) {
             // Fallback for required field if not provided in update (creation mode)
-            $data['store_type'] = $data['store_type'] ?? 'محاصيل';
+            $data['store_type'] = $data['store_type'] ?? 'منتجات زراعية';
             
             $updatedStore = $this->marketplaceService->createStore(
                 $user,
