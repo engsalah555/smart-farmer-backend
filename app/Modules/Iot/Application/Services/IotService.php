@@ -2,15 +2,21 @@
 
 namespace App\Modules\Iot\Application\Services;
 
-use App\Jobs\SyncFirebaseSettings;
 use App\Modules\Iot\Domain\Models\IotDevice;
 use App\Modules\Iot\Domain\Models\IrrigationLog;
 use App\Modules\Iot\Domain\Models\IrrigationSchedule;
-use App\Services\FirebaseService;
+use App\Services\SupabaseService;
 use Illuminate\Support\Facades\Log;
 
 class IotService
 {
+    protected $supabase;
+
+    public function __construct(SupabaseService $supabase)
+    {
+        $this->supabase = $supabase;
+    }
+
     /**
      * Get device status and logs for the current user.
      */
@@ -51,9 +57,10 @@ class IotService
         $device->is_irrigation_on = $status;
         $device->save();
 
-        // ✅ Sync with Firebase RTDB (New)
-        SyncFirebaseSettings::dispatch("SmartFarm/Devices/{$device->device_id}/Settings", [
-            'ManualPump' => $status,
+        // ✅ Sync with Supabase
+        $this->supabase->updateDevice($device->device_id, [
+            'is_irrigation_on' => $status,
+            'last_sync_at' => now()->toIso8601String(),
         ]);
 
         // Log the action. water_used = 0 here because actual consumption
@@ -82,46 +89,12 @@ class IotService
         $device->auto_irrigation = $auto;
         $device->save();
 
-        // ✅ Sync with Firebase RTDB (New)
-        SyncFirebaseSettings::dispatch("SmartFarm/Devices/{$device->device_id}/Settings", [
-            'Mode' => $auto ? 'AUTO' : 'MANUAL',
-            'AutoThreshold' => $threshold,
+        // ✅ Sync with Supabase
+        $this->supabase->updateDevice($device->device_id, [
+            'auto_irrigation' => $auto,
+            'auto_threshold' => $threshold,
+            'last_sync_at' => now()->toIso8601String(),
         ]);
-
-        return $device;
-    }
-
-    /**
-     * Fetch real-time sensor data from Firebase and sync local DB.
-     */
-    public function syncFromFirebase($user)
-    {
-        $device = IotDevice::where('user_id', $user->id)->first();
-        if (! $device) {
-            return null;
-        }
-
-        $firebase = app(FirebaseService::class);
-        $data = $firebase->get("SmartFarm/Devices/{$device->device_id}/Sensors");
-
-        if ($data) {
-            $device->update([
-                'temperature' => $data['temperature'] ?? $device->temperature,
-                'humidity' => $data['humidity'] ?? $device->humidity,
-                'soil_moisture' => $data['soil_moisture'] ?? $device->soil_moisture,
-                'water_level' => $data['water_level'] ?? $device->water_level,
-                'rain_level' => $data['rain_level'] ?? $device->rain_level,
-                'last_sync_at' => now(),
-            ]);
-
-            // Also update status if available
-            $status = $firebase->get("SmartFarm/Devices/{$device->device_id}/Status");
-            if ($status) {
-                $device->update([
-                    'is_irrigation_on' => $status['PumpON'] ?? $device->is_irrigation_on,
-                ]);
-            }
-        }
 
         return $device;
     }

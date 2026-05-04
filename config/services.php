@@ -47,10 +47,9 @@ return [
         'key' => env('PERENUAL_API_KEY'),
     ],
 
-    'firebase' => [
-        'api_key' => env('FIREBASE_API_KEY'),
-        'database_url' => env('FIREBASE_DATABASE_URL'),
-        'credentials_path' => env('FIREBASE_CREDENTIALS_PATH', storage_path('app/firebase_credentials.json')),
+    'supabase' => [
+        'url' => env('SUPABASE_URL'),
+        'anon_key' => env('SUPABASE_ANON_KEY'),
     ],
 
 ];
