@@ -81,6 +81,11 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         return $this->hasOne(Store::class);
     }
 
+    public function devices(): HasMany
+    {
+        return $this->hasMany(\App\Modules\Iot\Domain\Models\IotDevice::class);
+    }
+
     public function crops(): HasMany
     {
         return $this->hasMany(Crop::class);
