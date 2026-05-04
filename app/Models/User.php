@@ -45,6 +45,7 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
         'is_verified',
         'custom_title',
         'email_verified_at',
+        'is_iot_enabled',
     ];
 
     /**
@@ -68,6 +69,7 @@ class User extends Authenticatable implements FilamentUser, HasDefaultTenant, Ha
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_verified' => 'boolean',
+            'is_iot_enabled' => 'boolean',
         ];
     }
 

@@ -69,6 +69,11 @@ class UserForm
                             ->label('توثيق الحساب (إشارة الصح)')
                             ->helperText('عند التفعيل، ستظهر إشارة التوثيق بجانب اسم المستخدم')
                             ->default(false),
+
+                        Toggle::make('is_iot_enabled')
+                            ->label('تفعيل خدمة الـ IoT')
+                            ->helperText('عند التفعيل، سيتمكن المستخدم من الوصول لمميزات التحكم بالري الذكي')
+                            ->default(false),
                     ]),
 
                 Section::make('الصورة الشخصية')
