@@ -13,9 +13,15 @@ function check($url, $key, $label) {
     ]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $res = curl_exec($ch);
-    echo "$label: " . $res . "\n";
+    echo "$label: " . $res . "\n\n";
+    
+    $data = json_decode($res, true);
+    if (isset($data[0])) {
+        echo "COLUMNS FOR $label: " . implode(", ", array_keys($data[0])) . "\n\n";
+    }
 }
 
-check($baseUrl . "/rest/v1/sensor-data?limit=1&order=id.desc", $key, "SENSOR DATA LATEST");
-check($baseUrl . "/rest/v1/relay-log?limit=1&order=id.desc", $key, "RELAY LOG LATEST");
-check($baseUrl . "/rest/v1/iot_devices?limit=1", $key, "IOT DEVICES");
+echo "--- CHECKING SUPABASE TABLES ---\n";
+check($baseUrl . "/rest/v1/sensor-data?limit=1&order=id.desc", $key, "sensor-data");
+check($baseUrl . "/rest/v1/relay-log?limit=1&order=id.desc", $key, "relay-log");
+check($baseUrl . "/rest/v1/iot_devices?device_id=eq.ESP32-MASTER-001", $key, "iot_devices");

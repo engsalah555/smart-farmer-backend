@@ -22,14 +22,17 @@ class IotDevice extends Model
         'temperature',
         'humidity',
         'soil_moisture',
+        'soil_temperature',
+        'rain_detected',
         'water_level',
-        'rain_level',
+        'auto_threshold',
     ];
 
     protected $casts = [
         'last_sync_at' => 'datetime',
         'is_irrigation_on' => 'boolean',
         'auto_irrigation' => 'boolean',
+        'rain_detected' => 'boolean',
         'water_consumption' => 'decimal:2',
     ];
 

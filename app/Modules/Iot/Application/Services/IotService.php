@@ -22,10 +22,6 @@ class IotService
      */
     protected function getMasterDevice($user)
     {
-        if (!$user->is_iot_enabled) {
-            return null;
-        }
-
         // Graduation project mode: All users share the same master device
         return IotDevice::first();
     }
