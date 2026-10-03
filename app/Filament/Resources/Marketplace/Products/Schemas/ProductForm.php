@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Marketplace\Products\Schemas;
 
+use App\Models\Category;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -46,7 +47,7 @@ class ProductForm
 
                                 Select::make('category')
                                     ->label('الفئة العامة')
-                                    ->options(\App\Models\Category::marketplace()->pluck('name', 'name'))
+                                    ->options(Category::marketplace()->pluck('name', 'name'))
                                     ->required(),
 
                                 Toggle::make('is_featured')
@@ -85,7 +86,7 @@ class ProductForm
 
                 Section::make('صور المنتج')
                     ->schema([
-                        FileUpload::make('image')
+                        FileUpload::make('image_url')
                             ->label('الصورة الرئيسية')
                             ->image()
                             ->disk('public')

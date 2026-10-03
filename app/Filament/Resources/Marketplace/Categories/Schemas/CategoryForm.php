@@ -24,7 +24,7 @@ class CategoryForm
                             ->schema([
                                 Select::make('store_id')
                                     ->label('المتجر')
-                                    ->relationship('store', 'name')
+                                    ->relationship('store', 'store_name')
                                     ->searchable()
                                     ->required()
                                     ->preload(),
@@ -50,7 +50,7 @@ class CategoryForm
                             ->rows(3)
                             ->columnSpanFull(),
 
-                        FileUpload::make('image')
+                        FileUpload::make('image_url')
                             ->label('صورة القسم')
                             ->image()
                             ->imageEditor()

@@ -32,16 +32,6 @@ class PlantsTable
                     ->fontFamily('serif')
                     ->sortable(),
 
-                TextColumn::make('difficulty_level')
-                    ->label('الصعوبة')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'سهل' => 'success',
-                        'متوسط' => 'warning',
-                        'صعب' => 'danger',
-                        default => 'gray',
-                    }),
-
                 TextColumn::make('planting_season')
                     ->label('الموسم')
                     ->searchable(),

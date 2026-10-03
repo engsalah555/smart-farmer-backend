@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Marketplace\Schemas;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class MarketplaceCategoryForm
@@ -12,7 +12,7 @@ class MarketplaceCategoryForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Section::make('معلومات التصنيف')
                     ->description('أدخل تفاصيل تصنيف المتجر هنا')
                     ->schema([
@@ -31,7 +31,7 @@ class MarketplaceCategoryForm
                         Textarea::make('description')
                             ->label('الوصف')
                             ->columnSpanFull(),
-                    ])->columns(2)
+                    ])->columns(2),
             ]);
     }
 }

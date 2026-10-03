@@ -33,11 +33,6 @@ class PlantController extends Controller
             $query->where('category_id', $request->input('category_id'));
         }
 
-        // Filter by difficulty
-        if ($request->has('difficulty_level')) {
-            $query->where('difficulty_level', $request->input('difficulty_level'));
-        }
-
         $plants = $query->latest()->paginate($perPage);
 
         return $this->paginated($plants, PlantResource::class);

@@ -55,7 +55,6 @@ class PlantSeeder extends Seeder
                 'description' => $p['description'] ?? '',
                 'benefits' => $p['benefits'] ?? '-',
                 'growth_guide' => $this->generateGrowthGuide($p),
-                'difficulty_level' => $p['difficulty_level'] ?? 'متوسط',
                 'image_url' => $p['image_url'] ?? '',
                 'planting_season' => $p['planting_season'] ?? 'غير محدد',
                 'harvest_time' => $p['harvest_time'] ?? 'غير محدد',

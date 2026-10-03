@@ -17,7 +17,7 @@ class CategoriesTable
     {
         return $table
             ->columns([
-                ImageColumn::make('image')
+                ImageColumn::make('image_url')
                     ->label('الصورة')
                     ->circular(),
 
@@ -26,7 +26,7 @@ class CategoriesTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('store.name')
+                TextColumn::make('store.store_name')
                     ->label('المتجر')
                     ->searchable()
                     ->sortable(),
@@ -49,7 +49,7 @@ class CategoriesTable
             ->filters([
                 SelectFilter::make('store_id')
                     ->label('المتجر')
-                    ->relationship('store', 'name')
+                    ->relationship('store', 'store_name')
                     ->searchable()
                     ->preload(),
             ])

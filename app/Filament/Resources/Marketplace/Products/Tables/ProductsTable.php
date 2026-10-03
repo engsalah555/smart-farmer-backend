@@ -19,7 +19,7 @@ class ProductsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                ImageColumn::make('image')
+                ImageColumn::make('image_url')
                     ->label('الصورة'),
 
                 TextColumn::make('name')

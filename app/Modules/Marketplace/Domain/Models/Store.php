@@ -153,6 +153,19 @@ class Store extends Model implements HasMedia
     // =========================================================
 
     /**
+     * Alias for store_name to safely support $store->name calls
+     */
+    public function getNameAttribute(): ?string
+    {
+        return $this->attributes['store_name'] ?? null;
+    }
+
+    public function setNameAttribute(string $value): void
+    {
+        $this->attributes['store_name'] = $value;
+    }
+
+    /**
      * متوسط تقييم المتجر محسوب من منتجاته الفعلية.
      * لا يُخزَّن في قاعدة البيانات لضمان الدقة الدائمة.
      */
@@ -184,6 +197,7 @@ class Store extends Model implements HasMedia
                 return $logo;
             }
             $path = ltrim($logo, '/');
+
             return str_starts_with($path, 'storage/') ? url($path) : url('storage/'.$path);
         }
 

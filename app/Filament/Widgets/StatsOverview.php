@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
+use App\Models\VerificationRequest;
 use App\Modules\Community\Domain\Models\Post;
 use App\Modules\Iot\Domain\Models\IotDevice;
 use App\Modules\Marketplace\Domain\Models\Order;
@@ -54,7 +55,7 @@ class StatsOverview extends BaseWidget
         // 3. Crops & Community
         $totalCrops = Crop::count();
         $totalPosts = Post::count();
-        $activeDevices = IotDevice::where('status', 'online')->count();
+        $activeDevices = IotDevice::whereIn('status', ['active', 'online'])->count();
 
         return [
             Stat::make('إجمالي المبيعات', number_format($currentMonthSales, 0).' ر.ي')
@@ -89,7 +90,7 @@ class StatsOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-shopping-bag')
                 ->color('danger'),
 
-            Stat::make('طلبات التوثيق', rescue(fn() => \App\Models\VerificationRequest::where('status', 'pending')->count(), 0))
+            Stat::make('طلبات التوثيق', rescue(fn () => VerificationRequest::where('status', 'pending')->count(), 0))
                 ->description('بانتظار التوثيق')
                 ->descriptionIcon('heroicon-m-shield-check')
                 ->color('warning'),

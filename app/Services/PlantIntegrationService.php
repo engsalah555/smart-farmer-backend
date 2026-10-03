@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Modules\PlantGuide\Domain\Models\CareGuide;
 use App\Models\Category;
+use App\Modules\PlantGuide\Domain\Models\CareGuide;
 use App\Modules\PlantGuide\Domain\Models\Plant;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -66,7 +66,6 @@ class PlantIntegrationService
                         'category_id' => $category->id,
                         'common_name' => $commonNameAr ?: $plantData['common_name'],
                         'description' => $descriptionAr,
-                        'difficulty_level' => $this->translateText(ucfirst($details['care_level'] ?? 'Medium')),
                     ]
                 );
 
