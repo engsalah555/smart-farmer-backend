@@ -187,13 +187,13 @@ class Store extends Model implements HasMedia
             return str_starts_with($path, 'storage/') ? url($path) : url('storage/'.$path);
         }
 
-        // 2. Fallback to user's profile photo (unified identity)
+        // 2. Fallback to user's profile photo — only if relation is already eager-loaded.
+        // Do NOT use User::find() here — it causes N+1 queries in list endpoints.
         if ($this->relationLoaded('user') && $this->user) {
             return $this->user->getProfilePhotoUrlAttribute();
         }
 
-        $user = User::find($this->user_id);
-        return $user ? $user->getProfilePhotoUrlAttribute() : null;
+        return null;
     }
 
     /**

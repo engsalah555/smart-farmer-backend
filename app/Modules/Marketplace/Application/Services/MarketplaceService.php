@@ -35,7 +35,11 @@ class MarketplaceService
     {
         if ($onlyFeatured && $perPage === 20 && empty($query)) {
             return Cache::remember('marketplace_featured_products', 3600, function () use ($perPage) {
-                return Product::with(['store:id,store_name,slug', 'catalog:id,name,slug'])
+                return Product::with([
+                    'store:id,user_id,store_name,slug,address,logo,cover',
+                    'store.user:id,phone,profile_photo_path',
+                    'catalog:id,name,slug',
+                ])
                     ->featured()
                     ->withAvg('reviews', 'rating')
                     ->withCount('reviews')
@@ -44,7 +48,12 @@ class MarketplaceService
             });
         }
 
-        return Product::with(['store:id,store_name,slug', 'catalog:id,name,slug', 'media'])
+        return Product::with([
+            'store:id,user_id,store_name,slug,address,logo,cover',
+            'store.user:id,phone,profile_photo_path',
+            'catalog:id,name,slug',
+            'media',
+        ])
             ->when($onlyFeatured, fn ($q) => $q->featured())
             ->when($query, function ($q) use ($query) {
                 $q->where(function ($sub) use ($query) {
