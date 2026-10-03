@@ -1,2 +1,12 @@
 *
 !.gitignore
+!avatars/
+!avatars/**
+!plants/
+!plants/**
+!posts/
+!posts/**
+!products/
+!products/**
+!stores/
+!stores/**

@@ -256,4 +256,33 @@ class FilamentFileUploadTest extends TestCase
         $post->refresh();
         $this->assertSame('community/posts/test_post.jpg', $post->getRawOriginal('image_url'));
     }
+
+    public function test_storage_route_serves_existing_file_with_cors_headers(): void
+    {
+        $testDir = storage_path('app/public/test_route');
+        if (! is_dir($testDir)) {
+            mkdir($testDir, 0755, true);
+        }
+        file_put_contents($testDir.'/sample.txt', 'test-content');
+
+        try {
+            $response = $this->get('/storage/test_route/sample.txt');
+
+            $response->assertOk();
+            $response->assertHeader('Access-Control-Allow-Origin', '*');
+            $this->assertSame(realpath($testDir.'/sample.txt'), realpath($response->getFile()->getPathname()));
+        } finally {
+            @unlink($testDir.'/sample.txt');
+            @rmdir($testDir);
+        }
+    }
+
+    public function test_storage_route_returns_svg_placeholder_when_file_does_not_exist(): void
+    {
+        $response = $this->get('/storage/non_existent_image_12345.jpg');
+
+        $response->assertOk();
+        $response->assertHeader('Content-Type', 'image/svg+xml');
+        $this->assertStringContainsString('<svg', $response->getContent());
+    }
 }
