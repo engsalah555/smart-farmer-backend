@@ -32,19 +32,19 @@ class SanitizeImagePaths extends Command
         $this->info('Starting image path sanitation...');
 
         // فحص وجود الأعمدة مرة واحدة خارج الحلقة لتجنب N+1 على Schema
-        $hasStoreLogo       = Schema::hasColumn('stores', 'logo');
-        $hasStoreCover      = Schema::hasColumn('stores', 'cover_image');
-        $hasProductImage    = Schema::hasColumn('products', 'image_url');
-        $hasCatalogImage    = Schema::hasColumn('store_catalogs', 'image_url');
+        $hasStoreLogo = Schema::hasColumn('stores', 'logo');
+        $hasStoreCover = Schema::hasColumn('stores', 'cover_image');
+        $hasProductImage = Schema::hasColumn('products', 'image_url');
+        $hasCatalogImage = Schema::hasColumn('store_catalogs', 'image_url');
 
         // 1. Sanitize Store logos and cover images — chunkById بدلاً من all()
         if ($hasStoreLogo || $hasStoreCover) {
             Store::chunkById(200, function ($stores) {
                 foreach ($stores as $store) {
-                    $oldLogo  = $store->logo;
+                    $oldLogo = $store->logo;
                     $oldCover = $store->cover_image;
 
-                    $store->logo        = $this->sanitize($store->logo);
+                    $store->logo = $this->sanitize($store->logo);
                     $store->cover_image = $this->sanitize($store->cover_image);
 
                     if ($store->isDirty()) {
@@ -59,7 +59,7 @@ class SanitizeImagePaths extends Command
         if ($hasProductImage) {
             Product::chunkById(200, function ($products) {
                 foreach ($products as $product) {
-                    $oldImage          = $product->image_url;
+                    $oldImage = $product->image_url;
                     $product->image_url = $this->sanitize($product->image_url);
 
                     if ($product->isDirty()) {
@@ -74,7 +74,7 @@ class SanitizeImagePaths extends Command
         if ($hasCatalogImage) {
             StoreCatalog::chunkById(200, function ($catalogs) {
                 foreach ($catalogs as $catalog) {
-                    $oldImage           = $catalog->image_url;
+                    $oldImage = $catalog->image_url;
                     $catalog->image_url = $this->sanitize($catalog->image_url);
 
                     if ($catalog->isDirty()) {

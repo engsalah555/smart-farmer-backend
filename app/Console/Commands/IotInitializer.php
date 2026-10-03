@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 class IotInitializer extends Command
 {
     protected $signature = 'iot:init';
+
     protected $description = 'Initialize master IoT device and enable IoT for the test user';
 
     public function handle()
@@ -18,7 +19,7 @@ class IotInitializer extends Command
 
         // 1. Ensure User exists
         $user = User::where('email', 'admin@example.com')->first();
-        if (!$user) {
+        if (! $user) {
             $user = User::create([
                 'name' => 'Admin User',
                 'email' => 'admin@example.com',
@@ -29,14 +30,14 @@ class IotInitializer extends Command
             $this->info('Created admin user: admin@example.com');
         } else {
             $user->update(['is_iot_enabled' => true]);
-            $this->info('Enabled IoT for existing user: ' . $user->email);
+            $this->info('Enabled IoT for existing user: '.$user->email);
         }
 
         // 2. Ensure IotDevice exists
         $deviceId = 'ESP32-MASTER-001';
         $device = IotDevice::where('device_id', $deviceId)->first();
 
-        if (!$device) {
+        if (! $device) {
             IotDevice::create([
                 'user_id' => $user->id,
                 'device_id' => $deviceId,

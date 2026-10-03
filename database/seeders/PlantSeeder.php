@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Modules\PlantGuide\Domain\Models\CareGuide;
 use App\Models\Category;
+use App\Modules\PlantGuide\Domain\Models\CareGuide;
 use App\Modules\PlantGuide\Domain\Models\Plant;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -19,7 +18,7 @@ class PlantSeeder extends Seeder
         Plant::truncate();
 
         $jsonPath = database_path('seeders/yemeni_plants.json');
-        if (!file_exists($jsonPath)) {
+        if (! file_exists($jsonPath)) {
             return;
         }
 

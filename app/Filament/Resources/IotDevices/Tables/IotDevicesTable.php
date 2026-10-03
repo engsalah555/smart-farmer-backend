@@ -5,6 +5,10 @@ namespace App\Filament\Resources\IotDevices\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class IotDevicesTable
@@ -13,40 +17,40 @@ class IotDevicesTable
     {
         return $table
             ->columns([
-                \Filament\Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('اسم الجهاز')
                     ->searchable()
                     ->sortable(),
-                    
-                \Filament\Tables\Columns\TextColumn::make('user.name')
+
+                TextColumn::make('user.name')
                     ->label('المستخدم')
                     ->searchable()
                     ->sortable(),
-                    
-                \Filament\Tables\Columns\TextColumn::make('device_id')
+
+                TextColumn::make('device_id')
                     ->label('ID الجهاز')
                     ->copyable()
                     ->searchable(),
-                    
-                \Filament\Tables\Columns\BadgeColumn::make('status')
+
+                BadgeColumn::make('status')
                     ->label('الحالة')
                     ->colors([
                         'success' => 'active',
                         'warning' => 'maintenance',
                         'danger' => 'inactive',
                     ]),
-                    
-                \Filament\Tables\Columns\IconColumn::make('is_irrigation_on')
+
+                IconColumn::make('is_irrigation_on')
                     ->label('الري')
                     ->boolean(),
-                    
-                \Filament\Tables\Columns\TextColumn::make('last_sync_at')
+
+                TextColumn::make('last_sync_at')
                     ->label('آخر مزامنة')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
-                \Filament\Tables\Filters\SelectFilter::make('status')
+                SelectFilter::make('status')
                     ->label('الحالة')
                     ->options([
                         'active' => 'نشط',

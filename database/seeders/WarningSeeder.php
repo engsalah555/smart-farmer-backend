@@ -2,61 +2,51 @@
 
 namespace Database\Seeders;
 
-use App\Models\Warning;
+use App\Modules\PlantGuide\Domain\Models\Warning;
 use Illuminate\Database\Seeder;
 
 class WarningSeeder extends Seeder
 {
-    /**
-     * تعبئة بيانات التحذيرات الأولية.
-     *
-     * تشغيل: php artisan db:seed --class=WarningSeeder
-     */
     public function run(): void
     {
-        // تجنب إدراج مكرر
-        if (Warning::count() > 0) {
-            $this->command->info('WarningSeeder: تم تخطي الإدراج — البيانات موجودة مسبقاً');
-
-            return;
-        }
-
-        Warning::insert([
+        $warnings = [
             [
-                'title' => 'تحذير من موجة صقيع',
-                'message' => 'من المتوقع انخفاض درجات الحرارة إلى ما دون الصفر مئوية خلال اليومين القادمين. يرجى أخذ الاحتياطات اللازمة لحماية المحاصيل.',
+                'title' => 'تحذير مناخي: موجة صقيع (ضريب) متوقعة في المرتفعات',
+                'message' => 'تشير مؤشرات الأرصاد الزراعية إلى احتمالية هبوط درجات الحرارة إلى ما يقارب الصفر المئوي في قيعان ذمار، صنعاء، وعمران فجر الغد. نهيب بالمزارعين تغطية المشاتل وتشغيل رشاشات المياه أو الري الخفيف فجراً لحماية عروش البطاطس والخضار.',
                 'type' => 'weather',
                 'severity' => 'critical',
-                'location' => 'المناطق الشمالية والوسطى',
+                'location' => 'ذمار، صنعاء، عمران، صعدة',
                 'active' => true,
-                'expires_at' => now()->addDays(2),
+                'expires_at' => now()->addDays(3),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'title' => 'ظهور آفة زراعية جديدة',
-                'message' => 'تم رصد انتشار لحشرة المن في المزارع المجاورة. ينصح بالرش الوقائي.',
+                'title' => 'إنذار وبائي: رصد بؤر لحافرة الطماطم (توتا أبسلوتا)',
+                'message' => 'تم رصد نشاط متزايد لآفة حافرة الطماطم في مزارع تهامة ومأرب. يرجى من المزارعين فحص السطح السفلي للأوراق ونصب المصائد الفرمونية والرش الوقائي الفوري بالمبيدات المتخصصة المسجلة.',
                 'type' => 'pest',
                 'severity' => 'high',
-                'location' => 'كل المناطق',
+                'location' => 'الحديدة، مأرب، الجوف',
                 'active' => true,
                 'expires_at' => now()->addDays(7),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'title' => 'إشعار تحديث',
-                'message' => 'تم تحديث أسعار الأسمدة في قسم الماركت. تفقد العروض الجديدة.',
+                'title' => 'إرشاد موسمي: بدء موسم غرس شتلات البن والفاكهة',
+                'message' => 'مع حلول فترات اعتدال الطقس ورطوبة التربة المناسبة، ينصح بالبدء في غرس شتلات البن والأشجار المثمرة مع الالتزام بخلط التربة بالسماد البلدي المعقم وتأمين مصدات الرياح.',
                 'type' => 'general',
                 'severity' => 'low',
-                'location' => null,
+                'location' => 'محافظات المرتفعات الغربية والوسطى',
                 'active' => true,
-                'expires_at' => now()->addDays(1),
+                'expires_at' => now()->addDays(14),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-        ]);
+        ];
 
-        $this->command->info('WarningSeeder: تمت إضافة 3 تحذيرات بنجاح ✅');
+        foreach ($warnings as $w) {
+            Warning::create($w);
+        }
     }
 }

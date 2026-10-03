@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Modules\Marketplace\Domain\Models\Store;
 use App\Models\Category;
+use App\Modules\Marketplace\Domain\Models\Store;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 class StandardizeMarketplaceCategories extends Command
@@ -60,7 +60,7 @@ class StandardizeMarketplaceCategories extends Command
                     $this->line("Updating $count stores from '$old' to '$new'...");
                     Store::where('store_type', $old)->update(['store_type' => $new]);
                 }
-                
+
                 // Also update products if they have a category field (if applicable)
                 // Note: Products usually use the category name directly if it was dirty
                 DB::table('products')->where('category', $old)->update(['category' => $new]);
@@ -68,15 +68,15 @@ class StandardizeMarketplaceCategories extends Command
 
             // Standard professional names
             $standardNames = [
-                'بذور زراعية', 
-                'أسمدة', 
-                'مبيدات زراعية', 
+                'بذور زراعية',
+                'أسمدة',
+                'مبيدات زراعية',
                 'أنظمة ري وطاقة',
-                'معدات وأدوات', 
-                'مشاتل', 
-                'منتجات زراعية'
+                'معدات وأدوات',
+                'مشاتل',
+                'منتجات زراعية',
             ];
-            
+
             // Remove categories that are not in the standard list
             $redundantCategories = Category::where('type', 'marketplace')
                 ->whereNotIn('name', $standardNames)
@@ -89,13 +89,13 @@ class StandardizeMarketplaceCategories extends Command
 
             DB::commit();
             $this->info('Standardization completed successfully.');
-            
+
             $this->call('db:seed', ['--class' => 'MarketplaceCategorySeeder']);
             $this->info('MarketplaceCategorySeeder re-run to ensure all standard categories exist with correct icons.');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->error('Error during standardization: ' . $e->getMessage());
+            $this->error('Error during standardization: '.$e->getMessage());
         }
     }
 }

@@ -11,7 +11,6 @@ use App\Models\Category;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
 
 class MarketplaceCategoryResource extends Resource
