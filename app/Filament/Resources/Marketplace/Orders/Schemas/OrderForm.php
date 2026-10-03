@@ -99,6 +99,7 @@ class OrderForm
                         FileUpload::make('receipt_image')
                             ->label('صورة الوصل (للتحويل)')
                             ->image()
+                            ->disk('public')
                             ->directory('order-receipts'),
                     ]),
             ]);

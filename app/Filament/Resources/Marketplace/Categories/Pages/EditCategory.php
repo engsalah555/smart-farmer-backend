@@ -16,4 +16,11 @@ class EditCategory extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['image_url'] = $this->getRecord()->getRawOriginal('image_url');
+
+        return $data;
+    }
 }

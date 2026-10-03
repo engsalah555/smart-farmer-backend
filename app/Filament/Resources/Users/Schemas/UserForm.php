@@ -82,6 +82,7 @@ class UserForm
                         FileUpload::make('profile_image')
                             ->label('الصورة الشخصية')
                             ->image()
+                            ->disk('public')
                             ->directory('profiles')
                             ->columnSpanFull(),
                     ]),

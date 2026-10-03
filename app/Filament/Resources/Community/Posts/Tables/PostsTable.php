@@ -18,7 +18,7 @@ class PostsTable
     {
         return $table
             ->columns([
-                ImageColumn::make('image')
+                ImageColumn::make('image_url')
                     ->label('الصورة')
                     ->circular(),
 
