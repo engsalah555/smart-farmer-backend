@@ -6,6 +6,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/app-version', function () {
+    return response()->json([
+        'status' => 'online',
+        'build' => '2026-10-04-v2',
+        'storage_exists' => is_dir(storage_path('app/public')),
+        'sorghum_exists' => file_exists(storage_path('app/public/plants/sorghum.jpg')),
+    ]);
+});
+
 Route::get('/storage/{path}', function (string $path) {
     $filePath = storage_path('app/public/'.$path);
 
